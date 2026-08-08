@@ -1,0 +1,159 @@
+---
+/**
+ * /convert/[slug] — per-format converter pages.
+ * One static page per entry in src/lib/converterPages.ts. Each page embeds the
+ * standalone ConverterApp with a preset output format and the matching sample
+ * file, plus honest intro copy and FAQ (rendered visibly AND as FAQPage
+ * JSON-LD — Google requires the JSON-LD to match visible content).
+ */
+import Layout from '../../layouts/Layout.astro';
+import { Icon } from '../../components/ui/Icon';
+import { ConverterApp } from '../../components/converter/ConverterApp';
+import { CONVERTER_BY_SLUG, CONVERTER_PAGES } from '../../lib/converterPages';
+import type { OutputFormat } from '../../components/tool/FormatConverter';
+
+export function getStaticPaths() {
+  return CONVERTER_PAGES.map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+const related = page.related
+  .map((slug) => CONVERTER_BY_SLUG[slug])
+  .filter(Boolean);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://querydrop.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Convert', item: 'https://querydrop.com/convert' },
+        { '@type': 'ListItem', position: 3, name: page.h1, item: `https://querydrop.com/convert/${page.slug}` },
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: page.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: `QueryDrop ${page.from} to ${page.to} converter`,
+      url: `https://querydrop.com/convert/${page.slug}`,
+      applicationCategory: 'UtilitiesApplication',
+      operatingSystem: 'Any',
+      description: page.metaDescription,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    },
+  ],
+};
+---
+
+<Layout title={page.title} description={page.metaDescription} canonical={`/convert/${page.slug}`}>
+  <div class="min-h-screen">
+    <header class="border-b border-border-subtle bg-bg-0/80 sticky top-0 z-sticky backdrop-saturate-150">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 text-text-primary hover:no-underline">
+          <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="6" fill="#0a0a0f" stroke="#00f0ff" stroke-width="1.5"/>
+            <path d="M8 10h16M8 16h12M8 22h8" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="font-semibold tracking-tight">QueryDrop</span>
+        </a>
+        <nav class="flex items-center gap-1 sm:gap-2 text-sm" aria-label="Main navigation">
+          <a href="/convert" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Convert</a>
+          <a href="/tool" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">SQL Tool</a>
+          <a
+            href="/convert"
+            class="ml-1 sm:ml-2 inline-flex items-center gap-1.5 bg-accent-brand text-bg-0 px-3 py-1.5 rounded-md font-medium hover:bg-bg-2"
+          >
+            All converters
+            <Icon name="arrow-right" size={14} />
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="px-4 sm:px-6 py-10 sm:py-14">
+      <div class="max-w-4xl mx-auto">
+        <nav aria-label="Breadcrumb" class="text-xs mono text-text-tertiary mb-4">
+          <a href="/" class="hover:text-text-primary">Home</a>
+          <span class="mx-1.5">/</span>
+          <a href="/convert" class="hover:text-text-primary">Convert</a>
+          <span class="mx-1.5">/</span>
+          <span class="text-text-secondary">{page.from} to {page.to}</span>
+        </nav>
+
+        <h1 class="text-3xl sm:text-5xl font-bold tracking-tight leading-[1.1] mb-4">
+          {page.h1}
+        </h1>
+        {page.intro.map((p) => (
+          <p class="text-text-secondary leading-relaxed mb-3">{p}</p>
+        ))}
+
+        <div class="mt-8">
+          <ConverterApp client:load presetOutput={page.toKey as OutputFormat} sampleHref={page.sampleHref} />
+          <p class="text-[10px] mono text-text-tertiary mt-2">{page.cardNote}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 py-10 sm:py-14 border-t border-border-subtle">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-6">{page.from} to {page.to}: questions people ask</h2>
+        <div class="space-y-4">
+          {page.faqs.map((f) => (
+            <div class="bg-bg-1 border border-border-subtle rounded-lg p-5">
+              <h3 class="font-semibold text-text-primary mb-2">{f.q}</h3>
+              <p class="text-sm text-text-secondary leading-relaxed">{f.a}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 py-10 sm:py-14 border-t border-border-subtle">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-6">Related converters</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {related.map((r) => (
+            <a
+              href={`/convert/${r.slug}`}
+              class="bg-bg-1 border border-border-subtle rounded-lg px-4 py-3 text-sm text-text-secondary hover:border-accent-brand/50 hover:text-text-primary transition-colors group"
+            >
+              <span class="mono">{r.from} to {r.to}</span>
+              <Icon name="arrow-right" size={12} class="ml-1 text-text-tertiary group-hover:text-accent-brand" />
+            </a>
+          ))}
+          <a
+            href="/convert"
+            class="bg-bg-1 border border-border-subtle rounded-lg px-4 py-3 text-sm text-text-secondary hover:border-accent-brand/50 hover:text-text-primary transition-colors group"
+          >
+            <span class="mono">All 9×9 formats</span>
+            <Icon name="arrow-right" size={12} class="ml-1 text-text-tertiary group-hover:text-accent-brand" />
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="px-4 sm:px-6 py-10 border-t border-border-subtle">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-text-tertiary">
+        <span>Built with <span class="text-accent-brand mono">DuckDB-WASM</span> · <span class="text-accent-brand mono">Astro</span></span>
+        <div class="flex items-center gap-4">
+          <a href="/" class="text-text-secondary hover:text-text-primary">Home</a>
+          <a href="/convert" class="text-text-secondary hover:text-text-primary">Convert</a>
+          <a href="/tool" class="text-text-secondary hover:text-text-primary">SQL Tool</a>
+          <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+        </div>
+      </div>
+    </footer>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </div>
+</Layout>

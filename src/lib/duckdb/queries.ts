@@ -114,6 +114,27 @@ export function generatePivotSQL(source: string, spec: PivotSpec): string {
   )) GROUP BY ${q(spec.rowColumn)}`;
 }
 
+/** Materialize a registered virtual file into a real table so it can be
+ *  queried by name (DESCRIBE / SELECT * FROM <name> / JOINs).
+ *
+ *  duckdb-wasm's registerFileHandle only exposes the file on the virtual
+ *  filesystem — it does NOT create a table or view, so `SELECT * FROM
+ *  <virtualName>` fails with "table does not exist". Reading via the
+ *  read_*_auto() table functions works on extension-less virtual names
+ *  because they sniff the content. Use temp=true for throwaway tables
+ *  (converter), false for session tables that must appear in the main
+ *  schema (SQL pad file list). */
+export async function materializeFile(
+  conn: AsyncDuckDBConnection,
+  virtualName: string,
+  format: FileFormat,
+  targetTable: string = virtualName,
+  temp = false,
+): Promise<void> {
+  const sql = sqlForFile(virtualName, format);
+  await conn.query(`CREATE ${temp ? 'TEMP ' : ''}TABLE ${quoteIdent(targetTable)} AS ${sql}`);
+}
+
 function quoteIdent(name: string): string {
   return `"${name.replace(/"/g, '""')}"`;
 }

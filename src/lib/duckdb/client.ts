@@ -18,15 +18,24 @@
 import * as duckdb from '@duckdb/duckdb-wasm';
 import type { AsyncDuckDB, DuckDBStatus, FileFormat, RegisteredFile } from './types';
 
+// Bundles MUST be absolute URLs: duckdb-wasm creates the worker from a blob:
+// URL, and inside a blob worker `new Request('/duckdb/...')` cannot resolve a
+// relative path (TypeError: Failed to parse URL). Resolving against the page
+// origin works both in dev and production.
+const bundleUrl = (path: string): string => {
+  const origin = typeof location !== 'undefined' ? location.origin : '';
+  return `${origin}${path}`;
+};
+
 const EH_BUNDLE: duckdb.DuckDBBundle = {
-  mainModule: '/duckdb/duckdb-eh.wasm',
-  mainWorker: '/duckdb/duckdb-browser-eh.worker.js',
-  pthreadWorker: '/duckdb/duckdb-browser-eh.worker.js',
+  mainModule: bundleUrl('/duckdb/duckdb-eh.wasm'),
+  mainWorker: bundleUrl('/duckdb/duckdb-browser-eh.worker.js'),
+  pthreadWorker: bundleUrl('/duckdb/duckdb-browser-eh.worker.js'),
 };
 
 const MVP_BUNDLE: duckdb.DuckDBBundle = {
-  mainModule: '/duckdb/duckdb-mvp.wasm',
-  mainWorker: '/duckdb/duckdb-browser-mvp.worker.js',
+  mainModule: bundleUrl('/duckdb/duckdb-mvp.wasm'),
+  mainWorker: bundleUrl('/duckdb/duckdb-browser-mvp.worker.js'),
   pthreadWorker: null,
 };
 
@@ -94,7 +103,7 @@ async function initialize(): Promise<AsyncDuckDB> {
 
     const instantiatePromise = db.instantiate(bundle.mainModule, bundle.pthreadWorker);
     const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error('DuckDB instantiate timed out after 30s')), 30000)
+      setTimeout(() => reject(new Error('DuckDB instantiate timed out after 60s')), 60000)
     );
     await Promise.race([instantiatePromise, timeoutPromise]);
 

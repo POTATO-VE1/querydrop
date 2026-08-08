@@ -24,6 +24,7 @@ import {
 } from '../../lib/duckdb/excel';
 import {
   getTableMetadata,
+  materializeFile,
   runQuery,
 } from '../../lib/duckdb/queries';
 import type {
@@ -57,7 +58,9 @@ type OutputFormat =
   | 'parquet'
   | 'sqlite';
 
-const EXTENSIONS: Record<OutputFormat, string> = {
+export type { OutputFormat };
+
+export const EXTENSIONS: Record<OutputFormat, string> = {
   csv: 'csv',
   json: 'json',
   ndjson: 'jsonl',
@@ -90,7 +93,9 @@ interface ConverterSourceFile {
   rowCount: number;
 }
 
-type ConverterSource =
+export type { ConverterSourceFile };
+
+export type ConverterSource =
   | ConverterSourceFile
   | { kind: 'result'; columns: string[]; rowCount: number };
 
@@ -300,6 +305,12 @@ export function FormatConverter({ open, onClose, currentResult }: FormatConverte
               {busy && (
                 <p className="text-xs text-text-tertiary text-center">Loading file…</p>
               )}
+
+              {error && (
+                <p className="text-[10px] mono text-accent-danger border border-accent-danger/30 rounded p-2 bg-accent-danger/5" role="alert">
+                  {error}
+                </p>
+              )}
             </>
           ) : (
             <>
@@ -424,7 +435,7 @@ function FormatTile({
   );
 }
 
-async function loadFileAsTempTable(
+export async function loadFileAsTempTable(
   file: File,
 ): Promise<{ format: FileFormat; virtualName: string; columns: string[]; rowCount: number }> {
   const format = detectFormat(file.name, file.type);
@@ -443,14 +454,14 @@ async function loadFileAsTempTable(
       if (sheets.length === 0) throw new Error('Empty Excel workbook');
       const csvFile = await excelSheetToCsv(file, sheets[0]!.name);
       const registered = await registerFile(db, csvFile, 'csv');
-      await conn.query(`CREATE TEMP TABLE ${safeName} AS SELECT * FROM ${registered.virtualName}`);
+      await materializeFile(conn, registered.virtualName, 'csv', virtualName);
     } else if (format === 'geojson') {
       const ndjsonFile = await geojsonToNdjson(file);
       const registered = await registerFile(db, ndjsonFile, 'ndjson');
-      await conn.query(`CREATE TEMP TABLE ${safeName} AS SELECT * FROM ${registered.virtualName}`);
+      await materializeFile(conn, registered.virtualName, 'ndjson', virtualName);
     } else if (format === 'csv' || format === 'tsv' || format === 'json' || format === 'ndjson' || format === 'parquet') {
       const registered = await registerFile(db, file, format);
-      await conn.query(`CREATE TEMP TABLE ${safeName} AS SELECT * FROM ${registered.virtualName}`);
+      await materializeFile(conn, registered.virtualName, format, virtualName);
     } else {
       throw new Error(`Unsupported input format: ${format}. Use one of: csv, tsv, json, ndjson, xlsx, parquet, feather, arrow, geojson.`);
     }
@@ -474,7 +485,7 @@ async function loadFileAsTempTable(
   }
 }
 
-async function convertSourceToBlob(
+export async function convertSourceToBlob(
   source: ConverterSource,
   output: OutputFormat,
   currentResult: QueryResult | null,

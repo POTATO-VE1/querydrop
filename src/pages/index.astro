@@ -217,7 +217,7 @@ const exports = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'Markdown', 'HTML'
 
     <!-- Footer -->
     <footer class="px-4 sm:px-6 py-10 border-t border-border-subtle">
-      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-text-tertiary">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-start justify-between gap-6 text-sm text-text-tertiary">
         <div class="flex items-center gap-2">
           <span>Built with</span>
           <span class="text-accent-brand mono">DuckDB-WASM</span>
@@ -226,19 +226,34 @@ const exports = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'Markdown', 'HTML'
           <span>·</span>
           <span class="text-accent-brand mono">React 19</span>
         </div>
-        <div class="flex items-center gap-4">
-          <!-- <a href="/guides" class="text-text-secondary hover:text-text-primary">Guides</a> -->
-          <!-- <a href="/datasets" class="text-text-secondary hover:text-text-primary">Datasets</a> -->
-          <!-- <a href="/pricing" class="text-text-secondary hover:text-text-primary">Pricing</a> -->
-          <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
-          <a
-            href="mailto:hello@querydrop.com"
-            class="text-text-secondary hover:text-text-primary inline-flex items-center gap-1.5"
-          >
-            <Icon name="mail" size={14} />
-            <span>Contact</span>
-          </a>
-          <span id="analytics-toggle-mount"></span>
+        <div class="flex flex-col sm:flex-row gap-6">
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] mono uppercase tracking-wider">Converters</span>
+            {[
+              ['parquet-to-csv', 'Parquet to CSV'],
+              ['csv-to-parquet', 'CSV to Parquet'],
+              ['excel-to-csv', 'Excel to CSV'],
+              ['csv-to-json', 'CSV to JSON'],
+              ['csv-to-sqlite', 'CSV to SQLite'],
+              ['parquet-to-excel', 'Parquet to Excel'],
+            ].map(([slug, label]) => (
+              <a href={`/convert/${slug}`} class="text-text-secondary hover:text-text-primary">{label}</a>
+            ))}
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] mono uppercase tracking-wider">Site</span>
+            <a href="/convert" class="text-text-secondary hover:text-text-primary">Convert</a>
+            <a href="/tool" class="text-text-secondary hover:text-text-primary">SQL Tool</a>
+            <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+            <a
+              href="mailto:hello@querydrop.com"
+              class="text-text-secondary hover:text-text-primary inline-flex items-center gap-1.5"
+            >
+              <Icon name="mail" size={14} />
+              <span>Contact</span>
+            </a>
+            <span id="analytics-toggle-mount"></span>
+          </div>
         </div>
       </div>
     </footer>

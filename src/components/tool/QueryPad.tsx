@@ -9,7 +9,7 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } fro
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { detectFormat, getDuckDB, getStatus, onStatusChange, registerFile } from '../../lib/duckdb/client';
 import type { AsyncDuckDB, AsyncDuckDBConnection, DuckDBStatus, RegisteredFile } from '../../lib/duckdb/types';
-import { generatePivotSQL, getSample, getTableMetadata, listTables, runQuery } from '../../lib/duckdb/queries';
+import { generatePivotSQL, getSample, getTableMetadata, listTables, materializeFile, runQuery } from '../../lib/duckdb/queries';
 import { categorizeType } from '../../lib/duckdb/queries';
 import type { ColumnCategory, ColumnInfo, ColumnStats, FileFormat, PivotSpec, QueryHistoryItem, QueryResult, QuerySnippet, TableMetadata } from '../../lib/duckdb/types';
 import { clearHistory, loadHistory, pushHistory } from '../../lib/duckdb/history';
@@ -236,6 +236,11 @@ const loadAndRegisterFile = useCallback(
 
       if (isArrowLike) {
         await insertArrowFile(conn, file, registered.virtualName);
+      } else {
+        // registerFile only exposes the file on the virtual filesystem; make
+        // it a real table so DESCRIBE / SELECT * FROM <name> work (see
+        // materializeFile in queries.ts).
+        await materializeFile(conn, registered.virtualName, format);
       }
 
       const [metadata, sample] = await Promise.all([

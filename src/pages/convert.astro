@@ -6,6 +6,8 @@
  */
 import Layout from '../layouts/Layout.astro';
 import { Icon } from '../components/ui/Icon';
+import { ConverterApp } from '../components/converter/ConverterApp';
+import { CONVERTER_PAGES } from '../lib/converterPages';
 
 const inputs = ['CSV', 'TSV', 'JSON', 'NDJSON', 'Excel', 'Parquet', 'Feather', 'Arrow', 'GeoJSON'] as const;
 const outputs = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'SQL', 'NDJSON', 'Markdown', 'HTML'] as const;
@@ -66,13 +68,32 @@ const jsonLd = {
         <p class="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
           Drop a file, pick an output, download. DuckDB-WASM does the work in your browser tab. No upload, no account, no analytics on your data.
         </p>
-        <a
-          href="/tool"
-          class="inline-flex items-center gap-2 bg-accent-brand text-bg-0 px-6 h-12 rounded-md font-medium text-base hover:bg-bg-2 hover:no-underline"
-        >
-          Open the converter
-          <Icon name="arrow-right" size={18} />
-        </a>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 pb-12 sm:pb-16">
+      <div class="max-w-3xl mx-auto">
+        <ConverterApp client:load presetOutput="csv" sampleHref="/samples/iris.csv" />
+        <p class="text-[10px] mono text-text-tertiary mt-2">Try it: the sample iris.csv converts to any format above.</p>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 pb-12 sm:pb-16">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center text-xs uppercase tracking-widest text-text-tertiary mb-4 mono">
+          Popular conversions
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {CONVERTER_PAGES.map((p) => (
+            <a
+              href={`/convert/${p.slug}`}
+              class="bg-bg-1 border border-border-subtle rounded-lg px-4 py-3 flex items-center justify-between text-sm text-text-secondary hover:border-accent-brand/50 hover:text-text-primary transition-colors group"
+            >
+              <span class="mono">{p.from} to {p.to}</span>
+              <Icon name="arrow-right" size={14} class="text-text-tertiary group-hover:text-accent-brand" />
+            </a>
+          ))}
+        </div>
       </div>
     </section>
 
@@ -129,25 +150,36 @@ const jsonLd = {
     </section>
 
     <section class="px-4 sm:px-6 py-16 sm:py-24 border-t border-border-subtle text-center">
-      <h2 class="text-3xl sm:text-4xl font-bold mb-4">Ready to convert?</h2>
-      <p class="text-text-secondary text-lg mb-8 max-w-xl mx-auto">No signup, no upload, no waiting room.</p>
+      <h2 class="text-3xl sm:text-4xl font-bold mb-4">Converted? Now query it.</h2>
+      <p class="text-text-secondary text-lg mb-8 max-w-xl mx-auto">Load the same file into the SQL pad — joins, aggregations, pivots, and 9 export formats.</p>
       <a
         href="/tool"
         class="inline-flex items-center gap-2 bg-accent-brand text-bg-0 px-8 h-12 rounded-md font-medium text-base hover:bg-bg-2 hover:no-underline"
       >
-        Open the tool
+        Open the SQL tool
         <Icon name="arrow-right" size={18} />
       </a>
     </section>
 
     <footer class="px-4 sm:px-6 py-10 border-t border-border-subtle">
-      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-text-tertiary">
-        <span>Built with <span class="text-accent-brand mono">DuckDB-WASM</span> · <span class="text-accent-brand mono">Astro</span></span>
-        <div class="flex items-center gap-4">
-          <a href="/" class="text-text-secondary hover:text-text-primary">Home</a>
-          <a href="/tool" class="text-text-secondary hover:text-text-primary">Tool</a>
-          <a href="/pivot" class="text-text-secondary hover:text-text-primary">Pivot</a>
-          <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-start justify-between gap-6 text-sm text-text-tertiary">
+        <div>
+          <span>Built with <span class="text-accent-brand mono">DuckDB-WASM</span> · <span class="text-accent-brand mono">Astro</span></span>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-6">
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] mono uppercase tracking-wider">Converters</span>
+            {CONVERTER_PAGES.slice(0, 6).map((p) => (
+              <a href={`/convert/${p.slug}`} class="text-text-secondary hover:text-text-primary">{p.from} to {p.to}</a>
+            ))}
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] mono uppercase tracking-wider">Site</span>
+            <a href="/" class="text-text-secondary hover:text-text-primary">Home</a>
+            <a href="/tool" class="text-text-secondary hover:text-text-primary">SQL Tool</a>
+            <a href="/pivot" class="text-text-secondary hover:text-text-primary">Pivot</a>
+            <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+          </div>
         </div>
       </div>
     </footer>

@@ -143,7 +143,14 @@ const networkRequests = [
         <div>
           <h2 class="text-xl font-semibold mb-3">Third parties</h2>
           <p class="text-text-secondary mb-3">The only third-party resource the site loads is the <a href="https://fonts.google.com/specimen/JetBrains+Mono" class="text-accent-brand hover:underline" target="_blank" rel="noopener noreferrer">JetBrains Mono</a> webfont, served from <code class="text-accent-brand mono">fonts.googleapis.com</code>. The font request does not include any user data — it is a static CSS + WOFF2 file. You can self-host a font and block that domain without breaking the tool.</p>
-          <p class="text-text-secondary">DuckDB-WASM and the sample datasets are served from <code class="text-accent-brand mono">querydrop.com</code> directly.</p>
+          <p class="text-text-secondary">DuckDB-WASM and the sample datasets are served from <code class="text-accent-brand mono">querydrop.com</code> directly. <strong class="text-text-primary">Your files are never transmitted</strong> — conversion and querying happen entirely in your browser, and the service worker deliberately bypasses share links (<code class="text-accent-brand mono">?q=</code>/<code class="text-accent-brand mono">?r=</code>) so shared queries never enter the cache.</p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold mb-3">Advertising</h2>
+          <p class="text-text-secondary mb-3">QueryDrop displays ads served by Google AdSense on its content pages to keep the tool free. When you visit a page with ads, Google may use cookies (including the DoubleClick cookie) to serve and personalise ads based on your visits to this and other sites. Ad requests never include any data from the files you convert — the converter works entirely in your browser.</p>
+          <p class="text-text-secondary mb-3">You can opt out of personalised advertising at <a href="https://www.google.com/settings/ads" class="text-accent-brand hover:underline" target="_blank" rel="noopener noreferrer">Google Ads Settings</a> or at <a href="https://www.aboutads.info" class="text-accent-brand hover:underline" target="_blank" rel="noopener noreferrer">aboutads.info</a>. You can also block ads entirely with any browser ad-blocker — the converter, the SQL tool, and every other feature work identically without ads.</p>
+          <p class="text-text-secondary">Third-party vendors, including Google, use cookies to serve ads based on your prior visits to this website and other websites. Google's use of advertising cookies enables it and its partners to serve ads based on your visits to this site and/or other sites on the Internet. Learn more about <a href="https://policies.google.com/technologies/partner-sites" class="text-accent-brand hover:underline" target="_blank" rel="noopener noreferrer">how Google uses data</a>.</p>
         </div>
 
         <div>
@@ -157,7 +164,7 @@ const networkRequests = [
         </div>
 
         <div class="pt-6 border-t border-border-subtle text-xs text-text-tertiary mono">
-          Last updated: June 2026
+          Last updated: August 2026
         </div>
       </div>
     </section>
