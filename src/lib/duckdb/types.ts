@@ -14,17 +14,14 @@ export type DuckDBStatus =
 
 /** A query result in our domain — Arrow table → plain JS rows. */
 export interface QueryResult<TRow = Record<string, unknown>> {
-  /** Column names in order. */
   columns: string[];
-  /** Column types as DuckDB type names (e.g., 'VARCHAR', 'BIGINT'). */
   columnTypes: string[];
-  /** Rows as plain objects keyed by column name. */
   rows: TRow[];
-  /** Total row count (after LIMIT, this is the visible count). */
+  /** Total rows in the result set. */
   rowCount: number;
-  /** Wall-clock duration of the query in ms. */
+  /** True when rows were capped (see MAX_RESULT_ROWS in queries.ts). */
+  truncated?: boolean;
   durationMs: number;
-  /** Bytes scanned by DuckDB (null if unavailable). */
   bytesScanned: number | null;
 }
 

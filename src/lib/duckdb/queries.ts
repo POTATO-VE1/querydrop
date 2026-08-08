@@ -1,9 +1,5 @@
 /**
- * Typed query helpers — convert DuckDB Arrow results → plain JS objects.
- *
- * DuckDB returns results as Apache Arrow tables. This module converts them to
- * the QueryResult shape defined in types.ts so the rest of the app doesn't
- * need to know about Arrow internals.
+ * Typed query helpers — DuckDB Arrow results → plain JS objects.
  */
 
 import type { AsyncDuckDBConnection } from '@duckdb/duckdb-wasm';
@@ -14,6 +10,10 @@ export type { ColumnCategory };
 import { splitStatements } from './split';
 
 const DEFAULT_TIMEOUT_MS = 30_000;
+/** Cap on rows materialized into JS — beyond this the tab would OOM. */
+const MAX_RESULT_ROWS = 50_000;
+/** Skip per-column stats above this row count (SUMMARIZE is a full scan). */
+const STATS_MAX_ROWS = 200_000;
 
 /** Generate the SQL needed to read a registered file as a table. */
 export function sqlForFile(virtualName: string, format: FileFormat): string {
@@ -34,10 +34,8 @@ export function sqlForFile(virtualName: string, format: FileFormat): string {
   }
 }
 
-/** Run a query and return a QueryResult. Splits multi-statement SQL on `;`,
- *  runs each, and returns the last statement that produced a non-empty schema
- *  (so a trailing SELECT shows its data instead of the preceding DDL's "Count"
- *  confirmation row). Aborts on the first error. */
+/** Run each statement in order; return the last one that produced a schema.
+ *  Aborts on the first error. */
 export async function runQuery(
   conn: AsyncDuckDBConnection,
   sql: string,
@@ -56,7 +54,7 @@ export async function runQuery(
   for (let i = 0; i < statements.length; i++) {
     const stmt = statements[i] as string;
 
-    // DuckDB-WASM doesn't expose AbortSignal; emulate with a timeout race
+    // DuckDB-WASM has no AbortSignal; emulate with a timeout race.
     let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
     const timeoutPromise = new Promise<never>((_, reject) => {
       timeoutHandle = setTimeout(
@@ -71,9 +69,7 @@ export async function runQuery(
     try {
       const arrowTable = await Promise.race([conn.query(stmt), timeoutPromise]);
       const result = arrowToResult(arrowTable as unknown as arrow.Table, startedAt);
-      // Only treat as a user-facing result if the statement produced a schema.
-      // (DDL/DML DuckDB returns 1×1 "Count" — we still record it so the
-      // HistoryItem duration is accurate, but prefer a later SELECT.)
+      // DDL/DML returns a 1x1 "Count" row; prefer a later SELECT's data.
       if (result.columns.length > 0) {
         lastResult = result;
       }
@@ -115,15 +111,11 @@ export function generatePivotSQL(source: string, spec: PivotSpec): string {
 }
 
 /** Materialize a registered virtual file into a real table so it can be
- *  queried by name (DESCRIBE / SELECT * FROM <name> / JOINs).
- *
- *  duckdb-wasm's registerFileHandle only exposes the file on the virtual
- *  filesystem — it does NOT create a table or view, so `SELECT * FROM
- *  <virtualName>` fails with "table does not exist". Reading via the
- *  read_*_auto() table functions works on extension-less virtual names
- *  because they sniff the content. Use temp=true for throwaway tables
- *  (converter), false for session tables that must appear in the main
- *  schema (SQL pad file list). */
+ *  queried by name. duckdb-wasm's registerFileHandle only exposes the file on
+ *  the virtual filesystem — it does NOT create a table, so `SELECT * FROM
+ *  <name>` fails with "table does not exist". The read_*_auto() functions
+ *  sniff content, so they work on extension-less virtual names. temp=true for
+ *  throwaway tables (converter), false for session tables (SQL pad). */
 export async function materializeFile(
   conn: AsyncDuckDBConnection,
   virtualName: string,
@@ -139,41 +131,44 @@ function quoteIdent(name: string): string {
   return `"${name.replace(/"/g, '""')}"`;
 }
 
-/** Throw if `name` is not a safe SQL identifier (letters/digits/underscore, not
- *  starting with a digit). Defensive: callers interpolate names into SQL
- *  template literals, so a bad name would either break the query or be a
- *  vector for injection. */
+/** Throw if `name` is not a safe SQL identifier. */
 function assertSafeIdent(name: string, ctx: string): void {
   if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) {
     throw new Error(`Invalid ${ctx}: ${JSON.stringify(name)} (must match /^[A-Za-z_][A-Za-z0-9_]*$/)`);
   }
 }
 
-/** Convert an Arrow table to our domain QueryResult. */
+/** Convert an Arrow table to our domain QueryResult, capped at
+ *  MAX_RESULT_ROWS rows (rowCount still reports the true total). */
 function arrowToResult(table: arrow.Table, startedAt: number): QueryResult {
   const columns = table.schema.fields.map((f) => f.name);
   const columnTypes = table.schema.fields.map((f) => f.type.toString());
+  const total = table.numRows;
   const rows: Record<string, unknown>[] = [];
 
+  let i = 0;
   for (const row of table) {
+    if (i >= MAX_RESULT_ROWS) break;
     const obj: Record<string, unknown> = {};
-    columns.forEach((col, i) => {
+    columns.forEach((col, j) => {
       obj[col] = serializeArrowValue(row[col]);
     });
     rows.push(obj);
+    i++;
   }
 
   return {
     columns,
     columnTypes,
     rows,
-    rowCount: rows.length,
+    rowCount: total,
+    truncated: total > rows.length,
     durationMs: Math.round(performance.now() - startedAt),
-    bytesScanned: null, // DuckDB-WASM doesn't expose this in the JS API as of v1.33
+    bytesScanned: null,
   };
 }
 
-/** Arrow values can be BigInts, TypedArrays, Date objects, etc. Convert to JSON-safe. */
+/** Arrow values can be BigInts, TypedArrays, Date objects, etc. → JSON-safe. */
 function serializeArrowValue(value: unknown): unknown {
   if (value === null || value === undefined) return value;
   if (typeof value === 'bigint') return value.toString();
@@ -200,7 +195,7 @@ export async function listTables(conn: AsyncDuckDBConnection): Promise<string[]>
 
 /** Map a DuckDB type name to a friendly UI category. */
 export function categorizeType(type: string): ColumnCategory {
-  const base = type.toUpperCase().trim().replace(/\([^)]*\)/g, '').trim();
+  const base = type.toUpperCase().trim().replace(/([^)]*)/g, '').trim();
   if (base.includes('[') || base.includes(']')) return 'complex';
   if (/^(TINYINT|SMALLINT|INTEGER|BIGINT|HUGEINT|UTINYINT|USMALLINT|UINTEGER|UBIGINT)$/.test(base)) return 'integer';
   if (/^(REAL|DOUBLE|FLOAT|DECIMAL|NUMERIC)$/.test(base)) return 'number';
@@ -229,11 +224,14 @@ export async function getTableMetadata(conn: AsyncDuckDBConnection, tableName: s
   const count = await runQuery(conn, `SELECT COUNT(*) AS n FROM ${tableName}`);
   const totalRowCount = Number(count.rows[0]?.['n'] ?? 0);
 
+  // Stats are a full scan — skip for large tables to keep loads fast.
   let stats: ColumnStats[] | undefined;
-  try {
-    stats = await getColumnStats(conn, tableName);
-  } catch (err) {
-    console.warn('[queries] getColumnStats failed:', err);
+  if (totalRowCount <= STATS_MAX_ROWS) {
+    try {
+      stats = await getColumnStats(conn, tableName);
+    } catch (err) {
+      console.warn('[queries] getColumnStats failed:', err);
+    }
   }
 
   return { tableName, columns, totalRowCount, stats };

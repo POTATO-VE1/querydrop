@@ -1,10 +1,9 @@
 /**
- * FormatConverter — modal that converts a dropped file (or current query
+ * FormatConverter — modal that converts a dropped file (or the current query
  * result) into one of 9 output formats. Parquet uses DuckDB `COPY TO
- * (FORMAT PARQUET)` so it streams without loading rows into JS; other
- * formats run `SELECT * FROM <tempTable>` and call the JS serializers from
- * `src/lib/export.ts`. Temp table is dropped in `finally` to keep the
- * DuckDB session clean.
+ * (FORMAT PARQUET)`; other formats run `SELECT * FROM <tempTable>` and use the
+ * JS serializers from `src/lib/export.ts`. The temp table + registered file
+ * are dropped in `finally`/unmount cleanup to keep the session clean.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -132,6 +131,11 @@ export function FormatConverter({ open, onClose, currentResult }: FormatConverte
               await conn.query(`DROP TABLE IF EXISTS ${safeName}`);
             } finally {
               await conn.close().catch(() => {});
+            }
+            try {
+              await db.dropFile(nameToDrop);
+            } catch {
+              // file may not exist
             }
           } catch {
             // best-effort cleanup
@@ -276,6 +280,8 @@ export function FormatConverter({ open, onClose, currentResult }: FormatConverte
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) void loadFile(file);
+                    // Allow re-selecting the same file.
+                    e.target.value = '';
                   }}
                 />
               </div>
@@ -453,15 +459,15 @@ export async function loadFileAsTempTable(
       const { sheets } = await parseExcelSheets(file);
       if (sheets.length === 0) throw new Error('Empty Excel workbook');
       const csvFile = await excelSheetToCsv(file, sheets[0]!.name);
-      const registered = await registerFile(db, csvFile, 'csv');
-      await materializeFile(conn, registered.virtualName, 'csv', virtualName);
+      await registerFile(db, csvFile, 'csv', virtualName);
+      await materializeFile(conn, virtualName, 'csv', virtualName);
     } else if (format === 'geojson') {
       const ndjsonFile = await geojsonToNdjson(file);
-      const registered = await registerFile(db, ndjsonFile, 'ndjson');
-      await materializeFile(conn, registered.virtualName, 'ndjson', virtualName);
+      await registerFile(db, ndjsonFile, 'ndjson', virtualName);
+      await materializeFile(conn, virtualName, 'ndjson', virtualName);
     } else if (format === 'csv' || format === 'tsv' || format === 'json' || format === 'ndjson' || format === 'parquet') {
-      const registered = await registerFile(db, file, format);
-      await materializeFile(conn, registered.virtualName, format, virtualName);
+      await registerFile(db, file, format, virtualName);
+      await materializeFile(conn, virtualName, format, virtualName);
     } else {
       throw new Error(`Unsupported input format: ${format}. Use one of: csv, tsv, json, ndjson, xlsx, parquet, feather, arrow, geojson.`);
     }
@@ -478,6 +484,11 @@ export async function loadFileAsTempTable(
       await conn.query(`DROP TABLE IF EXISTS ${safeName}`);
     } catch {
       // best-effort cleanup
+    }
+    try {
+      await db.dropFile(virtualName);
+    } catch {
+      // file may not exist
     }
     throw e;
   } finally {
@@ -510,6 +521,11 @@ export async function convertSourceToBlob(
       await conn.query(`DROP TABLE IF EXISTS ${safeName}`);
     } catch {
       // best-effort cleanup
+    }
+    try {
+      await db.dropFile(source.virtualName);
+    } catch {
+      // file may not exist
     }
     await conn.close().catch(() => {});
   }
@@ -571,6 +587,11 @@ async function convertFileToParquet(virtualName: string): Promise<Blob> {
       await db.dropFile(virtualFile);
     } catch {
       // best-effort cleanup
+    }
+    try {
+      await db.dropFile(virtualName);
+    } catch {
+      // file may not exist
     }
     await conn.close().catch(() => {});
   }

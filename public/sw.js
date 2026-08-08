@@ -1,18 +1,14 @@
 /**
  * QueryDrop — Service Worker
- * Hand-rolled (no Workbox / no @vite-pwa/astro peer-dep conflict with Astro 6).
  *
- * Caching strategy:
- *   - /duckdb/*, /sql-wasm/*  → cache-first, count-capped (WASM is large; ~5 files)
- *   - /samples/*              → cache-first, count-capped (~6 files)
- *   - /assets/*, /_astro/*, fonts, images → cache-first, count-capped at 200
- *   - navigations             → network-first, fall back to /tool/index.html
+ * Caching:
+ *   - /sql-wasm/* and jsdelivr DuckDB engine bundles → cache-first, capped
+ *   - /samples/* → cache-first, capped
+ *   - /_astro/*, fonts, images → cache-first, capped
+ *   - navigations → network-first, fall back to /tool/index.html
  *
- * Privacy: requests carrying ?q= or ?r= (share links) bypass the SW entirely
- * so shared SQL/results never sit in the SW cache.
- *
- * Activation: clean all caches whose name doesn't start with the current
- * CACHE_VERSION prefix, so upgrading the SW auto-evicts old assets.
+ * Privacy: requests carrying ?q= or ?r= (share links) bypass the SW entirely.
+ * Activation: wipe caches not prefixed with CACHE_VERSION.
  */
 
 const CACHE_VERSION = 'qd-v2';

@@ -53,10 +53,10 @@ export function ConverterApp({ presetOutput = 'csv', sampleHref }: ConverterAppP
   const [done, setDone] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Drop the converter's table when the source changes or the component
-  // unmounts. DuckDB TEMP tables are connection-scoped, so the converter
-  // materializes regular main-schema tables — which MUST be dropped here
-  // (and after each conversion) to avoid leaking tables into the session.
+  // Drop the converter's table + registered file when the source changes or
+  // the component unmounts. TEMP tables are connection-scoped in DuckDB, so
+  // the converter uses main-schema tables — these must be cleaned up here and
+  // after each conversion.
   useEffect(() => {
     const active = source?.kind === 'file' ? source.virtualName : null;
     return () => {
@@ -72,6 +72,11 @@ export function ConverterApp({ presetOutput = 'csv', sampleHref }: ConverterAppP
             await conn.query(`DROP TABLE IF EXISTS ${safeName}`);
           } finally {
             await conn.close().catch(() => {});
+          }
+          try {
+            await db.dropFile(nameToDrop);
+          } catch {
+            // file may not exist
           }
         } catch {
           // best-effort cleanup
@@ -200,6 +205,8 @@ export function ConverterApp({ presetOutput = 'csv', sampleHref }: ConverterAppP
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) void loadFile(file);
+                  // Allow re-selecting the same file.
+                  e.target.value = '';
                 }}
               />
             </div>

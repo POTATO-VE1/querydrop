@@ -1,27 +1,15 @@
 /**
  * DuckDB-WASM singleton client.
  *
- * Strategy:
- * - Lazy init: nothing loaded until first call to `getDuckDB()`.
- * - EH build primary, MVP build fallback for older browsers.
- * - Engine binaries served from the jsdelivr CDN (see below).
- *
- * Usage:
- *   const db = await getDuckDB();
- *   const conn = await db.connect();
- *   const result = await runQuery(conn, 'SELECT 1');
+ * Lazy init: nothing loads until the first `getDuckDB()` call.
+ * Engine binaries come from the jsdelivr CDN (see CDN_BASE below) — Cloudflare
+ * Pages rejects files over 25MB and the wasm binaries are 36-41MB. Absolute
+ * CDN URLs also avoid the blob-worker relative-path resolution failure.
  */
 
 import * as duckdb from '@duckdb/duckdb-wasm';
 import type { AsyncDuckDB, DuckDBStatus, FileFormat, RegisteredFile } from './types';
 
-// Engine bundles come from the jsdelivr CDN (the official duckdb-wasm
-// distribution). Self-hosting is impossible on Cloudflare Pages, which
-// rejects files over 25MB — the wasm binaries are 36-41MB. jsdelivr sends
-// CORS headers, so the blob worker can fetch them, and sw.js caches them
-// for offline use. CDN URLs are absolute, which also avoids the blob-worker
-// relative-path resolution failure (`new Request('/x')` breaks inside a
-// blob: URL).
 const CDN_BASE = `https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@${duckdb.PACKAGE_VERSION}/dist/`;
 
 const EH_BUNDLE: duckdb.DuckDBBundle = {
@@ -90,7 +78,7 @@ async function initialize(): Promise<AsyncDuckDB> {
 
   setStatus({
     kind: 'loading',
-    message: useEh ? 'Loading EH build (with pthreads)' : 'Loading MVP build (single-threaded)',
+    message: useEh ? 'Loading EH build' : 'Loading MVP build (single-threaded)',
   });
 
   try {
@@ -115,15 +103,14 @@ async function initialize(): Promise<AsyncDuckDB> {
 }
 
 /**
- * Register a File (from <input> or drop event) into DuckDB's virtual filesystem.
- * Returns the virtual name to use in SQL.
+ * Register a File (from <input> or drop event) into DuckDB's virtual
+ * filesystem. Returns the virtual name to use in SQL. Pass `name` to control
+ * the virtual name (e.g. to match a table name for easy cleanup).
  */
-export async function registerFile(db: AsyncDuckDB, file: File, format: FileFormat): Promise<RegisteredFile> {
-  // Strip extension and sanitize for DuckDB table name conventions
+export async function registerFile(db: AsyncDuckDB, file: File, format: FileFormat, name?: string): Promise<RegisteredFile> {
   const baseName = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_]/g, '_');
-  const virtualName = `${baseName}_${Date.now()}`;
+  const virtualName = name ?? `${baseName}_${Date.now()}`;
 
-  // DuckDB's registerFileHandle accepts a File or Blob directly
   await db.registerFileHandle(virtualName, file, duckdb.DuckDBDataProtocol.BROWSER_FILEREADER, true);
 
   return {

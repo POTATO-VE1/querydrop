@@ -1,8 +1,6 @@
 /**
- * QueryPad — Stage 8.
- * File drop + schema + data table + SQL editor (CodeMirror 6, neon theme, PostgreSQL dialect) +
- * schema-aware column autocomplete + multi-statement execution + query history dropdown +
- * result/error view. Virtualised results ship in Stage 9.
+ * QueryPad — file drop, schema, SQL editor, multi-statement execution,
+ * history, results/errors. The main interactive tool surface.
  */
 
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -401,6 +399,11 @@ const onFile = useCallback(
             await conn.query(`DROP TABLE IF EXISTS "${target.registered.virtualName.replace(/"/g, '""')}"`);
           } finally {
             conn.close().catch(() => {});
+          }
+          try {
+            await status.db.dropFile(target.registered.virtualName);
+          } catch {
+            // file may not exist (arrow/feather tables have no registered file)
           }
           const refreshConn = await status.db.connect();
           try {
@@ -828,7 +831,7 @@ const dbReady = status.kind === 'ready';
 function StatusBar({ status }: { status: DuckDBStatus }) {
   const dot =
     status.kind === 'ready'
-      ? { color: 'bg-accent-success', label: `DuckDB ready${status.buildUsed === 'mvp' ? ' · MVP (no pthreads)' : ' · EH (with pthreads)'}` }
+      ? { color: 'bg-accent-success', label: `DuckDB ready · ${status.buildUsed === 'mvp' ? 'MVP build' : 'EH build'}` }
       : status.kind === 'loading'
       ? { color: 'bg-accent-warn', label: status.message ?? 'Loading…' }
       : status.kind === 'error'
@@ -1600,6 +1603,9 @@ function ResultView({
         <span className="text-text-tertiary">·</span>
         <span className="text-text-primary">{formatNumber(result.rowCount)}</span>
         <span className="text-text-tertiary">rows</span>
+        {result.truncated && (
+          <span className="text-accent-brand">· first {formatNumber(result.rows.length)} shown</span>
+        )}
         <span className="text-text-tertiary">·</span>
         <span className="text-text-primary">{columns.length}</span>
         <span className="text-text-tertiary">columns</span>

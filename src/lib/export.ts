@@ -1,11 +1,8 @@
 /**
- * Export helpers — CSV/JSON/NDJSON/Markdown/HTML/SQL/Excel/Parquet/SQLite
- * serialization and browser download trigger. CSV follows RFC 4180: fields
- * containing comma, double-quote, or newline are wrapped in double quotes and
- * internal quotes are doubled. Binary formats (Excel, Parquet, SQLite) are
- * returned as Blobs. Parquet uses DuckDB's native `COPY ... TO ... (FORMAT
- * PARQUET)` after materializing the result into a temp table; SQLite uses
- * sql.js (lazy-loaded) to build a .sqlite3 file in-memory.
+ * Export helpers — CSV/JSON/NDJSON/Markdown/HTML/SQL serialization and
+ * browser download trigger. CSV follows RFC 4180. Binary formats (Excel,
+ * Parquet, SQLite) return Blobs; Parquet uses DuckDB's native COPY TO, SQLite
+ * uses sql.js (lazy-loaded).
  */
 
 import type { AsyncDuckDB, AsyncDuckDBConnection } from '@duckdb/duckdb-wasm';

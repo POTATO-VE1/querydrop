@@ -217,6 +217,12 @@ export function ExportMenu({ result, durationMs, sql, openConn }: ExportMenuProp
           role="menu"
           className="absolute right-0 top-full mt-1 z-50 w-72 bg-bg-1 border border-border-subtle rounded-lg  overflow-hidden"
         >
+          {result.truncated && (
+            <div className="px-3 py-2 border-b border-accent-danger/30 bg-accent-danger/5 text-[10px] mono text-accent-danger">
+              Only the first {result.rows.length.toLocaleString()} of {result.rowCount.toLocaleString()} rows
+              are loaded — exports will be partial. Add a LIMIT or filter to export everything.
+            </div>
+          )}
           <div className="px-3 py-2 border-b border-border-subtle text-[10px] mono uppercase tracking-wider text-text-tertiary">
             Export {result.rowCount.toLocaleString()} {result.rowCount === 1 ? 'row' : 'rows'}
           </div>

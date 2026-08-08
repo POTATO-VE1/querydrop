@@ -1,10 +1,7 @@
 /**
- * Save Workspace — persist the current session (files metadata + SQL) to
- * localStorage so the user can resume later, and export/import as JSON for
- * cross-device sync. File CONTENTS are never saved — only metadata — for
- * privacy and to stay under the 5 MB localStorage limit.
- *
- * Schema is versioned (`v: 1`) so future evolution does not break old saves.
+ * Save Workspace — persist session (file metadata + SQL) to localStorage,
+ * with JSON export/import for cross-device sync. File contents are never
+ * saved (privacy + 5MB localStorage limit). Schema versioned (v: 1).
  */
 
 import type { FileFormat } from './duckdb/types';
@@ -130,7 +127,8 @@ export function exportWorkspaceToFile(workspace: Workspace): void {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 0);
+  // Give the download time to start before revoking.
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 export async function importWorkspaceFromFile(file: File): Promise<Workspace> {
