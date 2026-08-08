@@ -1,14 +1,16 @@
 # Cloudflare Pages headers for QueryDrop.
 # Cross-Origin Isolation required for DuckDB-WASM high-perf mode
-# (SharedArrayBuffer + pthreads).
+# (SharedArrayBuffer + pthreads). COEP: credentialless keeps the isolation
+# while allowing no-cors third-party subresources (Google AdSense iframes)
+# that don't send CORP headers — require-corp would block ads outright.
 # https://web.dev/articles/coop-coep
 
 # Cross-Origin Isolation for the entire app
 /*
   Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Embedder-Policy: credentialless
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://plausible.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' blob:; worker-src 'self' blob:; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://plausible.io https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.googleadservices.com https://*.google.com https://*.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.gstatic.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://*.googlesyndication.com https://*.gstatic.com; connect-src 'self' blob: https://*.google.com https://*.googlesyndication.com https://*.googleadservices.com https://*.gstatic.com; frame-src https://*.googlesyndication.com https://*.google.com https://googleads.g.doubleclick.net https://*.doubleclick.net; worker-src 'self' blob:; frame-ancestors 'none'
 
 # DuckDB WASM bundles must be served with proper CORS so SharedArrayBuffer works
 /duckdb/*

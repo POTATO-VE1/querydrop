@@ -174,6 +174,54 @@ describe('serializeSQL', () => {
   });
 });
 
+describe('object cells (nested JSON / DuckDB structs)', () => {
+  const nested: QueryResult = {
+    columns: ['id', 'payload'],
+    columnTypes: ['INTEGER', 'STRUCT(a VARCHAR, b INTEGER)'],
+    rows: [{ id: 1, payload: { a: 'x', b: 2 } }, { id: 2, payload: [{ c: 1 }] }],
+    rowCount: 2,
+    durationMs: 1,
+    bytesScanned: null,
+  };
+
+  it('serializeCSV renders objects as JSON, not [object Object]', () => {
+    const out = serializeCSV(nested);
+    // RFC 4180: JSON contains double-quotes, so the field is quoted and internal quotes doubled
+    expect(out).toContain('1,"{""a"":""x"",""b"":2}"');
+    expect(out).not.toContain('[object Object]');
+  });
+
+  it('serializeMarkdown renders objects as JSON', () => {
+    const out = serializeMarkdown(nested);
+    expect(out).toContain('{"a":"x","b":2}');
+    expect(out).not.toContain('[object Object]');
+  });
+
+  it('serializeHTML escapes object JSON safely', () => {
+    const out = serializeHTML(nested);
+    expect(out).toContain('{&quot;a&quot;:&quot;x&quot;,&quot;b&quot;:2}');
+  });
+
+  it('serializeSQL embeds object JSON as an escaped string literal', () => {
+    const out = serializeSQL(nested);
+    expect(out).toContain("'{\"a\":\"x\",\"b\":2}'");
+  });
+
+  it('serializeNDJSON keeps objects intact', () => {
+    const out = serializeNDJSON(nested);
+    expect(out).toContain('{"id":1,"payload":{"a":"x","b":2}}');
+  });
+
+  it('serializes Date objects as ISO strings in CSV', () => {
+    const r: QueryResult = {
+      ...sample,
+      rows: [{ id: 1, name: new Date('2026-01-01T00:00:00Z') as unknown as string, active: true }],
+    };
+    const out = serializeCSV(r);
+    expect(out).toContain('2026-01-01T00:00:00.000Z');
+  });
+});
+
 describe('byte estimators', () => {
   it('estimateParquetBytes scales with cells', () => {
     expect(estimateParquetBytes({ ...sample, rowCount: 1000 })).toBeGreaterThan(

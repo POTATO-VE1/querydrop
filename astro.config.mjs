@@ -11,7 +11,7 @@ function coopCoepPlugin() {
     configureServer(server) {
       server.middlewares.use((_req, res, next) => {
         res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-        res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+        res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
         next();
       });
     },
@@ -36,11 +36,12 @@ export default defineConfig({
     optimizeDeps: { exclude: ['@duckdb/duckdb-wasm', 'apache-arrow'] },
     server: {
       // Cross-Origin Isolation for DuckDB-WASM high-perf mode (SharedArrayBuffer + pthreads).
+      // credentialless (not require-corp) so third-party ad iframes still load.
       // Production uses public/_headers — see that file.
       // https://web.dev/articles/coop-coep
       headers: {
         'Cross-Origin-Opener-Policy': 'same-origin',
-        'Cross-Origin-Embedder-Policy': 'require-corp',
+        'Cross-Origin-Embedder-Policy': 'credentialless',
       },
     },
   },

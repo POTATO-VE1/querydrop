@@ -9,16 +9,17 @@ import { Icon } from '../components/ui/Icon';
 
 // 10 differentiators (from v2 TRD §7) — each maps to a real feature
 const features = [
-  { icon: 'code' as const,           name: 'Visual Query Builder',  desc: 'Drag-and-drop tables, columns, and filters. Get clean SQL.',  tag: 'NEW' },
-  { icon: 'template' as const,       name: '30+ Query Templates',  desc: 'Pre-built queries that match your schema automatically.',     tag: 'NEW' },
-  { icon: 'pivot' as const,          name: 'Pivot Table',          desc: 'Drag rows, columns, values, filters. Live preview.',          tag: 'NEW' },
-  { icon: 'clean' as const,          name: 'Data Cleaning',        desc: '10 actions: trim, dedupe, fill, normalize, rename. Undo.',   tag: 'NEW' },
-  { icon: 'download' as const,       name: '9 Export Formats',     desc: 'CSV, JSON, Parquet, Excel, SQLite, Markdown, HTML, SQL, NDJSON.', tag: 'FREE' },
-  { icon: 'sparkle' as const,        name: 'Format Converter',     desc: 'Convert any of 10 inputs to any of 9 outputs. No upload.',   tag: 'NEW' },
-  { icon: 'bolt' as const,           name: 'Error Pattern DB',     desc: 'Friendly explanations for 50+ common DuckDB errors.',         tag: 'NEW' },
-  { icon: 'database' as const,       name: 'Sample Data Library',  desc: '30+ curated datasets (Iris, NYC Taxi, COVID, FIFA, more).',  tag: 'NEW' },
-  { icon: 'share' as const,          name: 'Shareable Links',      desc: 'Encode query + sample data in URL hash. No server.',         tag: 'NEW' },
-  { icon: 'globe' as const,          name: 'PWA + Offline',        desc: 'Install as app. Works without internet. 100% on your device.', tag: 'NEW' },
+  { icon: 'shuffle' as const,       name: 'Format Converter',      desc: 'Convert between 9 inputs and 9 outputs (CSV, JSON, Parquet, Excel, SQLite, more). No upload.', tag: 'FREE' },
+  { icon: 'code' as const,          name: 'SQL Query Pad',         desc: 'Full DuckDB SQL on your local files: joins, aggregations, window functions, pivot queries.', tag: 'FREE' },
+  { icon: 'bolt' as const,          name: 'DuckDB Engine',         desc: 'The real DuckDB compiled to WebAssembly. Reads Parquet natively, handles 100MB+ files.', tag: 'FAST' },
+  { icon: 'pivot' as const,         name: 'Pivot Table',           desc: 'Drag rows, columns, values, filters. Live preview.',                                                  tag: 'NEW' },
+  { icon: 'clean' as const,         name: 'Data Cleaning',         desc: '10 actions: trim, dedupe, fill, normalize, rename. Undo.',                                           tag: 'NEW' },
+  { icon: 'download' as const,      name: '9 Export Formats',      desc: 'CSV, JSON, Parquet, Excel, SQLite, Markdown, HTML, SQL, NDJSON.',                                      tag: 'FREE' },
+  { icon: 'template' as const,      name: '14 Query Templates',    desc: 'Pre-built queries that match your schema automatically.',                                             tag: 'NEW' },
+  { icon: 'sparkle' as const,       name: '19 Error Explanations', desc: 'Friendly explanations for the most common DuckDB errors.',                                            tag: 'NEW' },
+  { icon: 'database' as const,      name: '6 Sample Datasets',     desc: 'Iris, Titanic, cities, books, sales, server logs — one click to load.',                               tag: 'NEW' },
+  { icon: 'share' as const,         name: 'Shareable Links',       desc: 'Encode query + sample data in URL hash. No server.',                                                  tag: 'NEW' },
+  { icon: 'globe' as const,         name: 'PWA + Offline',         desc: 'Install as app. Works without internet. 100% on your device.',                                        tag: 'NEW' },
 ] as const;
 
 const formats = ['CSV', 'TSV', 'JSON', 'NDJSON', 'Excel', 'Parquet', 'Feather', 'Arrow', 'GeoJSON'] as const;
@@ -41,15 +42,13 @@ const exports = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'Markdown', 'HTML'
           <span class="font-semibold tracking-tight">QueryDrop</span>
         </a>
         <nav class="flex items-center gap-1 sm:gap-2 text-sm" aria-label="Main navigation">
-          <a href="/tool" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Tool</a>
-          <!-- <a href="/guides" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5 hidden sm:inline">Guides</a> -->
-          <!-- <a href="/datasets" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5 hidden sm:inline">Datasets</a> -->
-          <!-- <a href="/pricing" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5 hidden sm:inline">Pricing</a> -->
+          <a href="/convert" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Convert</a>
+          <a href="/tool" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">SQL Tool</a>
           <a
-            href="/tool"
+            href="/convert"
             class="ml-1 sm:ml-2 inline-flex items-center gap-1.5 bg-accent-brand text-bg-0 px-3 py-1.5 rounded-md font-medium hover:bg-bg-2"
           >
-            Open tool
+            Convert a file
             <Icon name="arrow-right" size={14} />
           </a>
         </nav>
@@ -64,21 +63,26 @@ const exports = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'Markdown', 'HTML'
           100% client-side. Zero server. Zero signup.
         </div>
         <h1 class="text-4xl sm:text-6xl font-bold tracking-tight leading-[1.05] mb-6">
-          SQL analytics on your<br />
-          local files. <span class="text-accent-brand">Private.</span>
+          Convert files.<br />
+          Query them. <span class="text-accent-brand">Nothing is uploaded.</span>
         </h1>
         <p class="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
-          Drop a CSV, Parquet, Excel, or JSON. Query with SQL, a visual builder, or a template. Export to 9 formats. Your files never leave your device.
+          Drop a CSV, Parquet, Excel, or JSON file. Convert it to another format or query it with SQL — all inside your browser tab. Your files never leave your device.
         </p>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
           <a
-            href="/tool"
+            href="/convert"
             class="inline-flex items-center gap-2 bg-accent-brand text-bg-0 px-6 h-12 rounded-md font-medium text-base hover:bg-bg-2 hover:no-underline"
           >
-            Open the tool
+            Convert a file
             <Icon name="arrow-right" size={18} />
           </a>
-
+          <a
+            href="/tool"
+            class="inline-flex items-center gap-2 border border-border-subtle text-text-primary px-6 h-12 rounded-md font-medium text-base hover:border-text-tertiary hover:no-underline"
+          >
+            Query with SQL
+          </a>
         </div>
         <p class="text-xs text-text-tertiary mt-6 mono">
           {formats.length} input formats · {exports.length} export formats · DuckDB-WASM · No telemetry on your data
@@ -115,8 +119,8 @@ const exports = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'Markdown', 'HTML'
     <!-- Features grid -->
     <section class="px-4 sm:px-6 py-12 sm:py-20 border-t border-border-subtle">
       <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl sm:text-4xl font-bold mb-3">Everything parquetreader has, plus more</h2>
+        <div class="text-center mb-8">
+          <h2 class="text-3xl sm:text-4xl font-bold mb-3">Everything you need to work with tabular files</h2>
           <p class="text-text-secondary text-lg max-w-2xl mx-auto">
             Built on DuckDB. Runs at full speed. Saves nothing. Costs you nothing.
           </p>
@@ -154,10 +158,44 @@ const exports = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'Markdown', 'HTML'
                 Your files, your queries, your results, and your data <span class="text-text-primary font-medium">never leave your device</span>. Not to a server. Not to an AI. Not to an analytics service.
               </p>
               <p class="text-text-secondary leading-relaxed">
-                This is not a marketing claim — it's architecture. QueryDrop is a static site. There is no backend. The browser refuses all third-party network calls.
+                This is not a marketing claim — it's architecture. QueryDrop is a static site with no backend. The conversion and SQL engine runs in your browser, and nothing you work with is ever transmitted anywhere.
               </p>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular conversions -->
+    <section class="px-4 sm:px-6 py-12 sm:py-20 border-t border-border-subtle">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-10">
+          <h2 class="text-3xl sm:text-4xl font-bold mb-3">Popular conversions</h2>
+          <p class="text-text-secondary text-lg max-w-2xl mx-auto">
+            Each converter runs in your browser — no upload, no account, no file-size email gate.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {[
+            ['parquet-to-csv', 'Parquet to CSV'],
+            ['csv-to-parquet', 'CSV to Parquet'],
+            ['excel-to-csv', 'Excel to CSV'],
+            ['csv-to-json', 'CSV to JSON'],
+            ['json-to-csv', 'JSON to CSV'],
+            ['csv-to-sqlite', 'CSV to SQLite'],
+            ['parquet-to-excel', 'Parquet to Excel'],
+            ['parquet-to-json', 'Parquet to JSON'],
+            ['excel-to-parquet', 'Excel to Parquet'],
+            ['geojson-to-csv', 'GeoJSON to CSV'],
+          ].map(([slug, label]) => (
+            <a
+              href={`/convert/${slug}`}
+              class="bg-bg-1 border border-border-subtle rounded-lg px-4 py-3 flex items-center justify-between text-sm text-text-secondary hover:border-accent-brand/50 hover:text-text-primary transition-colors group"
+            >
+              <span class="mono">{label}</span>
+              <Icon name="arrow-right" size={14} class="text-text-tertiary group-hover:text-accent-brand" />
+            </a>
+          ))}
         </div>
       </div>
     </section>

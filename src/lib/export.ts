@@ -197,21 +197,34 @@ export function downloadBlob(blob: Blob, filename: string): void {
 
 function csvEscapeField(value: unknown): string {
   if (value === null || value === undefined) return '';
-  const s = typeof value === 'string' ? value : String(value);
+  const s = stringifyCell(value);
   if (s.includes(RFC4180_DELIM) || s.includes('"') || s.includes('\n') || s.includes('\r')) {
     return `"${s.replace(/"/g, '""')}"`;
   }
   return s;
 }
 
+/** Render a cell value as text. Objects/arrays (nested JSON, DuckDB structs)
+ *  become compact JSON instead of "[object Object]". Dates are ISO strings. */
+function stringifyCell(value: unknown): string {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') return String(value);
+  if (value instanceof Date) return value.toISOString();
+  if (value instanceof Uint8Array || ArrayBuffer.isView(value)) {
+    return value instanceof Uint8Array ? `0x${Array.from(value.slice(0, 8)).map((b) => b.toString(16).padStart(2, '0')).join('')}` : '[binary]';
+  }
+  if (typeof value === 'object') return JSON.stringify(value);
+  return String(value);
+}
+
 function mdEscapeCell(value: unknown): string {
   if (value === null || value === undefined) return '';
-  return String(value).replace(/\|/g, '\\|').replace(/\n/g, ' ').replace(/\r/g, '');
+  return stringifyCell(value).replace(/\|/g, '\\|').replace(/\n/g, ' ').replace(/\r/g, '');
 }
 
 function htmlEscape(value: unknown): string {
   if (value === null || value === undefined) return '';
-  return String(value)
+  return stringifyCell(value)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -231,6 +244,7 @@ function sqlValue(value: unknown): string {
   }
   if (typeof value === 'bigint') return value.toString();
   if (typeof value === 'boolean') return value ? 'TRUE' : 'FALSE';
+  if (typeof value === 'object' && !(value instanceof Date)) return `'${JSON.stringify(value).replace(/'/g, "''")}'`;
   return `'${String(value).replace(/'/g, "''")}'`;
 }
 
