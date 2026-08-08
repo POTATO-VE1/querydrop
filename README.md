@@ -45,5 +45,6 @@ npm run preview  # serve the built site locally
 
 - No backend, no accounts, no cookies for the tool itself.
 - File data never leaves the browser.
+- The DuckDB engine binary (~40MB WebAssembly) is served from the jsdelivr CDN; the request carries no user data and the service worker caches it for offline use.
 - Content pages show ads served by Google AdSense; ad requests carry no file data.
 - Optional Plausible analytics only loads if the visitor opts in via the footer toggle.

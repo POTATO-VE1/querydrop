@@ -3,11 +3,8 @@
  *
  * Strategy:
  * - Lazy init: nothing loaded until first call to `getDuckDB()`.
- * - EH build primary, MVP build fallback for older browsers without threads.
- * - Bundles served same-origin from /duckdb/* (set via public/_headers).
- * - The browser MUST be cross-origin isolated (COOP/COEP) for the EH build to
- *   use SharedArrayBuffer + pthreads. Detected at runtime; falls back to MVP
- *   if isolation is missing.
+ * - EH build primary, MVP build fallback for older browsers.
+ * - Engine binaries served from the jsdelivr CDN (see below).
  *
  * Usage:
  *   const db = await getDuckDB();
@@ -18,24 +15,24 @@
 import * as duckdb from '@duckdb/duckdb-wasm';
 import type { AsyncDuckDB, DuckDBStatus, FileFormat, RegisteredFile } from './types';
 
-// Bundles MUST be absolute URLs: duckdb-wasm creates the worker from a blob:
-// URL, and inside a blob worker `new Request('/duckdb/...')` cannot resolve a
-// relative path (TypeError: Failed to parse URL). Resolving against the page
-// origin works both in dev and production.
-const bundleUrl = (path: string): string => {
-  const origin = typeof location !== 'undefined' ? location.origin : '';
-  return `${origin}${path}`;
-};
+// Engine bundles come from the jsdelivr CDN (the official duckdb-wasm
+// distribution). Self-hosting is impossible on Cloudflare Pages, which
+// rejects files over 25MB — the wasm binaries are 36-41MB. jsdelivr sends
+// CORS headers, so the blob worker can fetch them, and sw.js caches them
+// for offline use. CDN URLs are absolute, which also avoids the blob-worker
+// relative-path resolution failure (`new Request('/x')` breaks inside a
+// blob: URL).
+const CDN_BASE = `https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@${duckdb.PACKAGE_VERSION}/dist/`;
 
 const EH_BUNDLE: duckdb.DuckDBBundle = {
-  mainModule: bundleUrl('/duckdb/duckdb-eh.wasm'),
-  mainWorker: bundleUrl('/duckdb/duckdb-browser-eh.worker.js'),
-  pthreadWorker: bundleUrl('/duckdb/duckdb-browser-eh.worker.js'),
+  mainModule: `${CDN_BASE}duckdb-eh.wasm`,
+  mainWorker: `${CDN_BASE}duckdb-browser-eh.worker.js`,
+  pthreadWorker: null,
 };
 
 const MVP_BUNDLE: duckdb.DuckDBBundle = {
-  mainModule: bundleUrl('/duckdb/duckdb-mvp.wasm'),
-  mainWorker: bundleUrl('/duckdb/duckdb-browser-mvp.worker.js'),
+  mainModule: `${CDN_BASE}duckdb-mvp.wasm`,
+  mainWorker: `${CDN_BASE}duckdb-browser-mvp.worker.js`,
   pthreadWorker: null,
 };
 

@@ -15,12 +15,15 @@
  * CACHE_VERSION prefix, so upgrading the SW auto-evicts old assets.
  */
 
-const CACHE_VERSION = 'qd-v1';
+const CACHE_VERSION = 'qd-v2';
 const WASM_CACHE = `${CACHE_VERSION}-wasm`;
 const SAMPLE_CACHE = `${CACHE_VERSION}-samples`;
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 
-const WASM_PATH = /^\/(?:duckdb|sql-wasm)\//;
+// Same-origin: sql.js wasm. Cross-origin: DuckDB engine binaries on the
+// jsdelivr CDN (36-41MB; cached so the tool works offline after first load).
+const WASM_PATH = /^\/sql-wasm\//;
+const CDN_DUCKDB = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@duckdb\/duckdb-wasm@[^/]+\/dist\//;
 const SAMPLE_PATH = /^\/samples\//;
 const STATIC_PATH = /^\/(?:assets|_astro)\/|(?:\.(?:js|mjs|css|woff2?|png|jpg|jpeg|webp|svg|ico))$/;
 
@@ -47,6 +50,12 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
 
   const url = new URL(req.url);
+
+  if (CDN_DUCKDB.test(url.href)) {
+    event.respondWith(staleWhileRevalidate(event, req, WASM_CACHE, 5));
+    return;
+  }
+
   if (url.origin !== self.location.origin) return;
 
   if (url.searchParams.has('q') || url.searchParams.has('r')) return;
