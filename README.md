@@ -1,54 +1,49 @@
 # QueryDrop
 
-QueryDrop is a fast, secure, and private browser-native SQL pad and format converter powered by DuckDB-WASM. Query and analyze files up to 100MB completely client-side. Your data never leaves your browser.
+QueryDrop is a free, browser-based tool for converting and querying data files. Everything runs on your device — files are never uploaded to any server.
 
-**Live demo / project home:** [github.com/POTATO-VE1/querydrop](https://github.com/POTATO-VE1/querydrop)
+## What it does
 
-## 🚀 Key Features
+- Converts files between 9 input formats and 9 output formats: CSV, TSV, JSON, NDJSON, Excel, Parquet, Feather, Arrow, GeoJSON, SQL, Markdown, HTML, and SQLite.
+- Runs SQL queries on local files (joins, aggregations, window functions, pivot queries).
+- Builds pivot tables and charts from query results.
+- Works offline as a PWA.
 
-* **Zero-Upload Ingestion**: Analyze CSV, TSV, JSON, NDJSON, Excel, Parquet, Feather, Arrow, and GeoJSON files in-browser.
-* **DuckDB SQL Engine**: Full SQL support including complex joins, aggregations, window functions, and pivot queries.
-* **Instant Conversions**: Convert between 9 inputs and 9 outputs (CSV, JSON, NDJSON, Parquet, Excel, SQLite, SQL, Markdown, HTML). Dedicated per-format pages at `/convert/<from>-to-<to>` (e.g. `/convert/parquet-to-csv`).
-* **Interactive Visualization**: Automatically chart query results using line and bar charts.
-* **Saved Queries & History**: Persist query snippets and recent run history locally in your browser.
-* **Visual Query Builder**: Slide-over panel to construct queries visually for non-SQL users.
-* **Shareable Workspace Links**: Encode your current query and result schemas into lightweight, compressed sharing URLs.
-* **Offline-First PWA**: Runs fully offline with service worker support.
+Each conversion has its own page under `/convert/<from>-to-<to>` (for example `/convert/parquet-to-csv`).
 
-## 🛠️ Tech Stack
+## How it works
 
-* **Core Structure**: [Astro](https://astro.build) (static outputs, optimized routing)
-* **WASM SQL Engine**: [@duckdb/duckdb-wasm](https://github.com/duckdb/duckdb-wasm)
-* **Frontend Components**: React, CodeMirror 6 (SQL editor), uPlot (charts), SheetJS (excel processing)
-* **Styling**: Vanilla CSS with HSL-themed variables (sleek dark mode)
-* **Testing**: Vitest with React Testing Library
+The site is a static build (Astro + React) deployed on Cloudflare Pages. There is no backend.
 
-## ⚙️ Commands
+The SQL engine is [DuckDB](https://duckdb.org) compiled to WebAssembly. When you drop a file, the browser:
 
-All commands are executed from the project root:
+1. Reads the file locally and registers it in an in-memory DuckDB instance running in a web worker.
+2. Runs the conversion or query on that instance.
+3. Writes the result back to your device as a download.
 
-| Command | Action |
-|:---|:---|
-| `npm install` | Installs project dependencies |
-| `npm run dev` | Starts the local dev server at `localhost:4321` |
-| `npm run build` | Builds the static site to `./dist/` |
-| `npm run test` | Runs the Vitest test suite |
-| `npm run test --run` | Executes tests and exits (ideal for CI) |
+Because the engine runs in the browser, files are never transmitted. DuckDB-WASM runs in a high-performance mode that requires cross-origin isolation (COOP + COEP headers, configured in `public/_headers`).
 
-## 🚀 Deploying
+## Development
 
-The site is a fully static build (output: `dist/`) and is deployed on **Cloudflare Pages**:
+```bash
+npm install
+npm run dev      # local dev server at localhost:4321
+npm run build    # static output in dist/
+npm run preview  # serve the built site locally
+```
 
-1. Push to GitHub (repo root is the project root).
-2. Cloudflare Pages → Create application → Connect to Git → select the repo.
-3. Build settings: **Build command** `npm run build`, **Build output directory** `dist`.
-4. Deploy. First build ~2 min, subsequent ~30s.
+## Deployment
 
-`public/_headers` ships COOP, COEP (`credentialless` — keeps DuckDB-WASM high-perf mode while allowing third-party ad iframes), HSTS, and a CSP that allows Google AdSense on content pages.
+1. Push the repo to GitHub.
+2. In Cloudflare Pages, create a project and connect the repository.
+3. Build command: `npm run build`. Output directory: `dist`.
+4. Deploy.
 
-## 🔒 Security & Privacy
+`public/_headers` ships the security headers (COOP, COEP, HSTS, CSP) that DuckDB-WASM needs and that allow Google AdSense on content pages.
 
-QueryDrop is architected with security and privacy as core priorities:
-1. **Local Processing**: DuckDB-WASM executes directly in the browser's web worker context.
-2. **CSP & Security Headers**: Equipped with a strict Content Security Policy, Cross-Origin Opener Policy (COOP), Cross-Origin Embedder Policy (COEP), and HSTS.
-3. **No Tracking**: Opt-in privacy-respecting Plausible analytics toggle only. Ads (AdSense) run on content pages only — the tool pages stay clean, and file data never leaves the browser.
+## Privacy
+
+- No backend, no accounts, no cookies for the tool itself.
+- File data never leaves the browser.
+- Content pages show ads served by Google AdSense; ad requests carry no file data.
+- Optional Plausible analytics only loads if the visitor opts in via the footer toggle.
