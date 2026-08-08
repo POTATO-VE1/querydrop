@@ -2,5 +2,4 @@ User-agent: *
 Allow: /
 
 # Share-link URLs (?q= / ?r=) are dynamic, not indexed here.
-# Sitemap covers all 5 static routes.
-Sitemap: https://querydrop.com/sitemap-index.xml
+Sitemap: https://querydrop.pages.dev/sitemap-index.xml

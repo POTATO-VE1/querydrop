@@ -1,0 +1,114 @@
+---
+/**
+ * /about — who's behind QueryDrop, what it is, and why it exists.
+ * AdSense reviewers and visitors both look for this page.
+ */
+import Layout from '../layouts/Layout.astro';
+import { Icon } from '../components/ui/Icon';
+---
+
+<Layout
+  title="About QueryDrop — Free, Private File Conversion & SQL | QueryDrop"
+  description="QueryDrop is a free, browser-based tool for converting and querying data files. No upload, no accounts, no tracking. Built by a solo developer."
+  canonical="/about"
+>
+  <div class="min-h-screen">
+    <header class="border-b border-border-subtle bg-bg-0/80 sticky top-0 z-sticky backdrop-saturate-150">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 text-text-primary hover:no-underline">
+          <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="6" fill="#0a0a0f" stroke="#00f0ff" stroke-width="1.5"/>
+            <path d="M8 10h16M8 16h12M8 22h8" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="font-semibold tracking-tight">QueryDrop</span>
+        </a>
+        <nav class="flex items-center gap-1 sm:gap-2 text-sm" aria-label="Main navigation">
+          <a href="/convert" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Convert</a>
+          <a href="/guides" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Guides</a>
+          <a href="/tool" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">SQL Tool</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="px-4 sm:px-6 py-14 sm:py-20">
+      <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl sm:text-5xl font-bold tracking-tight leading-[1.1] mb-6">About QueryDrop</h1>
+
+        <div class="space-y-5 text-text-secondary leading-relaxed">
+          <p>
+            QueryDrop is a free tool for converting and querying data files — CSV, Parquet, Excel,
+            JSON, and more — entirely inside your browser. There is no upload step, no account, and
+            no server holding your data. The conversion engine is <a href="https://duckdb.org" class="text-accent-brand hover:underline" target="_blank" rel="noopener noreferrer">DuckDB</a>,
+            compiled to WebAssembly, running on your device.
+          </p>
+          <p>
+            It started with a simple annoyance: every online file converter wanted the file
+            uploaded to its server, and every "query your CSV" service wanted an account and a
+            credit card. For files that are large or sensitive, that's a real problem. QueryDrop is
+            the tool I wanted to exist — one that treats your data as yours.
+          </p>
+          <p>
+            The site is built and maintained by one developer. It is a static site with no backend:
+            the pages you load are the entire product. The full source is public on GitHub, so
+            anyone can read exactly what runs in their browser.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-10">
+          <div class="bg-bg-1 border border-border-subtle rounded-xl p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <Icon name="lock" size={16} className="text-accent-brand" />
+              <h2 class="font-semibold text-text-primary text-sm">Privacy</h2>
+            </div>
+            <p class="text-sm text-text-secondary leading-relaxed">
+              Your files never leave your device. The site sets no cookies for the tool itself and
+              loads no analytics by default. See the full policy on the <a href="/privacy" class="text-accent-brand hover:underline">privacy page</a>.
+            </p>
+          </div>
+          <div class="bg-bg-1 border border-border-subtle rounded-xl p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <Icon name="code" size={16} className="text-accent-brand" />
+              <h2 class="font-semibold text-text-primary text-sm">Open source</h2>
+            </div>
+            <p class="text-sm text-text-secondary leading-relaxed">
+              The entire codebase is public on <a href="https://github.com/POTATO-VE1/querydrop" class="text-accent-brand hover:underline" target="_blank" rel="noopener noreferrer">GitHub</a>.
+              No compiled secrets, no obfuscated bundles.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-10 bg-bg-1 border border-border-subtle rounded-xl p-6">
+          <h2 class="text-xl font-bold text-text-primary mb-3">Contact</h2>
+          <p class="text-text-secondary leading-relaxed">
+            Found a bug, have a question, or want a format added? Email
+            <a href="mailto:hello@querydrop.com" class="text-accent-brand hover:underline"> hello@querydrop.com</a>,
+            or open an issue on the GitHub repository. Every report gets read.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="px-4 sm:px-6 py-10 border-t border-border-subtle">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-start justify-between gap-6 text-sm text-text-tertiary">
+        <span>Built with <span class="text-accent-brand mono">DuckDB-WASM</span> · <span class="text-accent-brand mono">Astro</span></span>
+        <div class="flex flex-col sm:flex-row gap-6">
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] mono uppercase tracking-wider">Converters</span>
+            <a href="/convert/parquet-to-csv" class="text-text-secondary hover:text-text-primary">Parquet to CSV</a>
+            <a href="/convert/csv-to-parquet" class="text-text-secondary hover:text-text-primary">CSV to Parquet</a>
+            <a href="/convert/excel-to-csv" class="text-text-secondary hover:text-text-primary">Excel to CSV</a>
+            <a href="/convert/csv-to-sqlite" class="text-text-secondary hover:text-text-primary">CSV to SQLite</a>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] mono uppercase tracking-wider">Site</span>
+            <a href="/" class="text-text-secondary hover:text-text-primary">Home</a>
+            <a href="/convert" class="text-text-secondary hover:text-text-primary">Convert</a>
+            <a href="/guides" class="text-text-secondary hover:text-text-primary">Guides</a>
+            <a href="/tool" class="text-text-secondary hover:text-text-primary">SQL Tool</a>
+            <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</Layout>

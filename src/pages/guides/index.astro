@@ -1,0 +1,80 @@
+---
+/**
+ * /guides — index of all articles. Thin but useful hub for the guide cluster.
+ */
+import Layout from '../../layouts/Layout.astro';
+import { Icon } from '../../components/ui/Icon';
+import { GUIDES } from '../../lib/guides';
+---
+
+<Layout
+  title="Guides — Parquet, CSV, SQL, and File Conversion | QueryDrop"
+  description="Practical guides on opening parquet files, choosing CSV vs parquet, querying files with SQL, and converting Excel safely. Written for real data work."
+  canonical="/guides"
+>
+  <div class="min-h-screen">
+    <header class="border-b border-border-subtle bg-bg-0/80 sticky top-0 z-sticky backdrop-saturate-150">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 text-text-primary hover:no-underline">
+          <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="6" fill="#0a0a0f" stroke="#00f0ff" stroke-width="1.5"/>
+            <path d="M8 10h16M8 16h12M8 22h8" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="font-semibold tracking-tight">QueryDrop</span>
+        </a>
+        <nav class="flex items-center gap-1 sm:gap-2 text-sm" aria-label="Main navigation">
+          <a href="/convert" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Convert</a>
+          <a href="/guides" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Guides</a>
+          <a href="/tool" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">SQL Tool</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="px-4 sm:px-6 py-14 sm:py-20">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl sm:text-5xl font-bold tracking-tight leading-[1.1] mb-4">Guides</h1>
+        <p class="text-text-secondary text-lg max-w-2xl mb-12">
+          Practical write-ups on working with data files — no fluff, just the steps and the honest limits.
+        </p>
+
+        <div class="space-y-4">
+          {GUIDES.map((g) => (
+            <a href={`/guides/${g.slug}`} class="block bg-bg-1 border border-border-subtle rounded-xl p-6 hover:border-accent-brand/50 transition-colors group">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <h2 class="text-xl font-bold text-text-primary mb-2 group-hover:text-accent-brand">{g.h1}</h2>
+                  <p class="text-sm text-text-secondary leading-relaxed">{g.metaDescription}</p>
+                </div>
+                <Icon name="arrow-right" size={18} class="text-text-tertiary group-hover:text-accent-brand shrink-0 mt-1" />
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <footer class="px-4 sm:px-6 py-10 border-t border-border-subtle">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-start justify-between gap-6 text-sm text-text-tertiary">
+        <span>Built with <span class="text-accent-brand mono">DuckDB-WASM</span> · <span class="text-accent-brand mono">Astro</span></span>
+        <div class="flex flex-col sm:flex-row gap-6">
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] mono uppercase tracking-wider">Converters</span>
+            <a href="/convert/parquet-to-csv" class="text-text-secondary hover:text-text-primary">Parquet to CSV</a>
+            <a href="/convert/csv-to-parquet" class="text-text-secondary hover:text-text-primary">CSV to Parquet</a>
+            <a href="/convert/excel-to-csv" class="text-text-secondary hover:text-text-primary">Excel to CSV</a>
+            <a href="/convert/csv-to-sqlite" class="text-text-secondary hover:text-text-primary">CSV to SQLite</a>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] mono uppercase tracking-wider">Site</span>
+            <a href="/" class="text-text-secondary hover:text-text-primary">Home</a>
+            <a href="/convert" class="text-text-secondary hover:text-text-primary">Convert</a>
+            <a href="/guides" class="text-text-secondary hover:text-text-primary">Guides</a>
+            <a href="/tool" class="text-text-secondary hover:text-text-primary">SQL Tool</a>
+            <a href="/about" class="text-text-secondary hover:text-text-primary">About</a>
+            <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</Layout>

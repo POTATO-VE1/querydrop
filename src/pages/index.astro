@@ -27,8 +27,8 @@ const exports = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'Markdown', 'HTML'
 ---
 
 <Layout
-  title="QueryDrop — SQL analytics on your local files. 100% in your browser."
-  description="Free, private SQL analytics on CSV, Parquet, Excel, JSON, and 6 more formats. 9 export formats, Visual Query Builder, Pivot Table, and more. Your files never leave your device."
+  title="QueryDrop — Convert Files in Your Browser, Nothing Uploaded"
+  description="Free, private file conversion and SQL analytics on CSV, Parquet, Excel, JSON. No upload, no signup — your files never leave your device."
 >
   <div class="min-h-screen">
     <!-- Header -->
@@ -43,6 +43,7 @@ const exports = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'Markdown', 'HTML'
         </a>
         <nav class="flex items-center gap-1 sm:gap-2 text-sm" aria-label="Main navigation">
           <a href="/convert" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Convert</a>
+          <a href="/guides" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Guides</a>
           <a href="/tool" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">SQL Tool</a>
           <a
             href="/convert"
@@ -243,7 +244,9 @@ const exports = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'Markdown', 'HTML'
           <div class="flex flex-col gap-1.5">
             <span class="text-[10px] mono uppercase tracking-wider">Site</span>
             <a href="/convert" class="text-text-secondary hover:text-text-primary">Convert</a>
+            <a href="/guides" class="text-text-secondary hover:text-text-primary">Guides</a>
             <a href="/tool" class="text-text-secondary hover:text-text-primary">SQL Tool</a>
+            <a href="/about" class="text-text-secondary hover:text-text-primary">About</a>
             <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
             <a
               href="mailto:hello@querydrop.com"
@@ -259,13 +262,29 @@ const exports = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'Markdown', 'HTML'
     </footer>
   <script type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'QueryDrop',
-    url: 'https://querydrop.com',
-    applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'Any',
-    description: 'Free, private SQL analytics on CSV, Parquet, Excel, JSON and more. 100% in your browser.',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        name: 'QueryDrop',
+        url: 'https://querydrop.pages.dev',
+        description: 'Free, private file conversion and SQL analytics in your browser.',
+      },
+      {
+        '@type': 'Organization',
+        name: 'QueryDrop',
+        url: 'https://querydrop.pages.dev',
+        email: 'hello@querydrop.com',
+      },
+      {
+        '@type': 'WebApplication',
+        name: 'QueryDrop',
+        url: 'https://querydrop.pages.dev',
+        applicationCategory: 'UtilitiesApplication',
+        operatingSystem: 'Any',
+        description: 'Free, private SQL analytics on CSV, Parquet, Excel, JSON and more. 100% in your browser.',
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      },
+    ],
   })} />
   </div>
 </Layout>

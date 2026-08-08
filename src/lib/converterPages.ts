@@ -47,7 +47,7 @@ export const CONVERTER_PAGES: ConverterPage[] = [
     from: 'Parquet',
     to: 'CSV',
     toKey: 'csv',
-    title: 'Parquet to CSV — Convert .parquet to .csv in your browser | QueryDrop',
+    title: 'Parquet to CSV Converter — No Upload, Free | QueryDrop',
     h1: 'Parquet to CSV converter',
     metaDescription:
       'Convert Parquet (.parquet) files to CSV in your browser. No upload, no signup, no email gate. DuckDB-powered, handles large files, works offline.',
@@ -79,7 +79,7 @@ export const CONVERTER_PAGES: ConverterPage[] = [
     from: 'CSV',
     to: 'Parquet',
     toKey: 'parquet',
-    title: 'CSV to Parquet — Convert .csv to .parquet in your browser | QueryDrop',
+    title: 'CSV to Parquet Converter — Compress & Speed Up Data | QueryDrop',
     h1: 'CSV to Parquet converter',
     metaDescription:
       'Convert CSV files to Parquet in your browser. Smaller files, faster queries, ready for DuckDB, Polars, pandas and Spark. No upload, no signup.',
@@ -111,10 +111,10 @@ export const CONVERTER_PAGES: ConverterPage[] = [
     from: 'Excel',
     to: 'CSV',
     toKey: 'csv',
-    title: 'Excel to CSV — Convert .xlsx to .csv in your browser | QueryDrop',
+    title: 'Excel to CSV Converter — Free, Private, In-Browser | QueryDrop',
     h1: 'Excel to CSV converter',
     metaDescription:
-      'Convert Excel .xlsx files to CSV in your browser. No upload, no signup. Great for loading spreadsheets into pandas, databases, or legacy tools. First worksheet converted.',
+      'Convert Excel .xlsx files to CSV in your browser. No upload, no signup. Great for loading spreadsheets into pandas, databases, or legacy tools.',
     intro: [
       'CSV is the interchange format that pandas, databases, and almost every legacy system consume, so converting an Excel workbook to CSV is a daily task in data work. QueryDrop reads the .xlsx file locally — parsing it with SheetJS in your browser — and writes a clean RFC 4180 CSV with properly quoted fields.',
       'Because the conversion happens on your device, there is no upload step: the workbook never leaves your machine, which matters when the sheet contains client lists, payroll, or anything you would not paste into a random website.',
@@ -143,7 +143,7 @@ export const CONVERTER_PAGES: ConverterPage[] = [
     from: 'CSV',
     to: 'JSON',
     toKey: 'json',
-    title: 'CSV to JSON — Convert .csv to .json in your browser | QueryDrop',
+    title: 'CSV to JSON Converter — Free, No Upload | QueryDrop',
     h1: 'CSV to JSON converter',
     metaDescription:
       'Convert CSV to JSON (array of objects) in your browser. Header row becomes keys, types are inferred by DuckDB. No upload, no signup.',
@@ -175,7 +175,7 @@ export const CONVERTER_PAGES: ConverterPage[] = [
     from: 'JSON',
     to: 'CSV',
     toKey: 'csv',
-    title: 'JSON to CSV — Convert .json to .csv in your browser | QueryDrop',
+    title: 'JSON to CSV Converter — Free, In Your Browser | QueryDrop',
     h1: 'JSON to CSV converter',
     metaDescription:
       'Convert JSON to CSV in your browser — no upload. Works with arrays of objects and JSON Lines (.ndjson). Nested objects become JSON-string cells. Free, no signup.',
@@ -207,7 +207,7 @@ export const CONVERTER_PAGES: ConverterPage[] = [
     from: 'CSV',
     to: 'SQLite',
     toKey: 'sqlite',
-    title: 'CSV to SQLite — Convert .csv to a .sqlite3 database in your browser | QueryDrop',
+    title: 'CSV to SQLite Converter — Make a .sqlite3 Database | QueryDrop',
     h1: 'CSV to SQLite converter',
     metaDescription:
       'Convert CSV to a real SQLite database (.sqlite3) in your browser. No upload, no signup. One table per file, ready for the sqlite3 CLI or any app.',
@@ -239,7 +239,7 @@ export const CONVERTER_PAGES: ConverterPage[] = [
     from: 'Parquet',
     to: 'Excel',
     toKey: 'excel',
-    title: 'Parquet to Excel — Convert .parquet to .xlsx in your browser | QueryDrop',
+    title: 'Parquet to Excel Converter — Free & Private | QueryDrop',
     h1: 'Parquet to Excel converter',
     metaDescription:
       'Convert Parquet files to Excel .xlsx in your browser. No upload, no signup. DuckDB reads the parquet, SheetJS writes the workbook — everything stays on your device.',
@@ -271,7 +271,7 @@ export const CONVERTER_PAGES: ConverterPage[] = [
     from: 'Parquet',
     to: 'JSON',
     toKey: 'json',
-    title: 'Parquet to JSON — Convert .parquet to .json in your browser | QueryDrop',
+    title: 'Parquet to JSON Converter — Free, No Upload | QueryDrop',
     h1: 'Parquet to JSON converter',
     metaDescription:
       'Convert Parquet to JSON (array of objects) in your browser. Struct columns become nested objects, types are preserved. No upload, no signup.',
@@ -303,7 +303,7 @@ export const CONVERTER_PAGES: ConverterPage[] = [
     from: 'Excel',
     to: 'Parquet',
     toKey: 'parquet',
-    title: 'Excel to Parquet — Convert .xlsx to .parquet in your browser | QueryDrop',
+    title: 'Excel to Parquet Converter — For Fast Analytics | QueryDrop',
     h1: 'Excel to Parquet converter',
     metaDescription:
       'Convert Excel .xlsx files to Parquet in your browser. Columnar compression, explicit types, ready for DuckDB, Polars and pandas. No upload, no signup.',
@@ -335,7 +335,7 @@ export const CONVERTER_PAGES: ConverterPage[] = [
     from: 'GeoJSON',
     to: 'CSV',
     toKey: 'csv',
-    title: 'GeoJSON to CSV — Convert .geojson to .csv in your browser | QueryDrop',
+    title: 'GeoJSON to CSV Converter — Free & Private | QueryDrop',
     h1: 'GeoJSON to CSV converter',
     metaDescription:
       'Convert GeoJSON to CSV in your browser — no upload. Feature properties become columns, geometry becomes a JSON-string column. Free, no signup.',

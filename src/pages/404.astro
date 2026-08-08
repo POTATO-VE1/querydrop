@@ -1,0 +1,29 @@
+---
+/**
+ * /404 — custom not-found page. Astro emits 404.html; Cloudflare Pages serves
+ * it for any missing URL, so visitors never see the platform's default page.
+ */
+import Layout from '../layouts/Layout.astro';
+import { Icon } from '../components/ui/Icon';
+---
+
+<Layout title="Page not found | QueryDrop" description="That page does not exist. Try the converter or a guide instead." noindex={true} canonical="/404">
+  <div class="min-h-screen flex flex-col items-center justify-center px-4 text-center">
+    <div class="w-12 h-12 rounded-xl bg-bg-1 border border-border-subtle flex items-center justify-center mb-6">
+      <Icon name="search" size={22} className="text-text-tertiary" />
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-bold tracking-tight mb-3">404 — page not found</h1>
+    <p class="text-text-secondary max-w-md mb-8">
+      That address doesn't exist. The data file you were looking for is still safe on your device.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3">
+      <a href="/convert" class="inline-flex items-center gap-2 bg-accent-brand text-bg-0 px-5 h-11 rounded-md font-medium text-sm hover:bg-bg-2 hover:no-underline">
+        Open the converter
+        <Icon name="arrow-right" size={14} />
+      </a>
+      <a href="/" class="inline-flex items-center gap-2 border border-border-subtle text-text-primary px-5 h-11 rounded-md font-medium text-sm hover:border-text-tertiary hover:no-underline">
+        Go home
+      </a>
+    </div>
+  </div>
+</Layout>

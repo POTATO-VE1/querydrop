@@ -1,0 +1,166 @@
+---
+/**
+ * /guides/[slug] — article template. Renders the guide content with visible
+ * FAQs + FAQPage JSON-LD (must match the visible text), breadcrumbs, and
+ * internal links to the matching converters.
+ */
+import Layout from '../../layouts/Layout.astro';
+import { Icon } from '../../components/ui/Icon';
+import { GUIDE_BY_SLUG, GUIDES } from '../../lib/guides';
+import { CONVERTER_BY_SLUG } from '../../lib/converterPages';
+
+export function getStaticPaths() {
+  return GUIDES.map((guide) => ({
+    params: { slug: guide.slug },
+    props: { guide },
+  }));
+}
+
+const { guide } = Astro.props;
+const related = guide.relatedConverters
+  .map((slug) => CONVERTER_BY_SLUG[slug])
+  .filter(Boolean);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://querydrop.pages.dev/' },
+        { '@type': 'ListItem', position: 2, name: 'Guides', item: 'https://querydrop.pages.dev/guides' },
+        { '@type': 'ListItem', position: 3, name: guide.h1, item: `https://querydrop.pages.dev/guides/${guide.slug}` },
+      ],
+    },
+    {
+      '@type': 'Article',
+      headline: guide.h1,
+      description: guide.metaDescription,
+      datePublished: guide.updatedAt,
+      dateModified: guide.updatedAt,
+      author: { '@type': 'Organization', name: 'QueryDrop' },
+      publisher: { '@type': 'Organization', name: 'QueryDrop' },
+      mainEntityOfPage: `https://querydrop.pages.dev/guides/${guide.slug}`,
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: guide.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  ],
+};
+---
+
+<Layout title={guide.title} description={guide.metaDescription} canonical={`/guides/${guide.slug}`}>
+  <div class="min-h-screen">
+    <header class="border-b border-border-subtle bg-bg-0/80 sticky top-0 z-sticky backdrop-saturate-150">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 text-text-primary hover:no-underline">
+          <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="6" fill="#0a0a0f" stroke="#00f0ff" stroke-width="1.5"/>
+            <path d="M8 10h16M8 16h12M8 22h8" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="font-semibold tracking-tight">QueryDrop</span>
+        </a>
+        <nav class="flex items-center gap-1 sm:gap-2 text-sm" aria-label="Main navigation">
+          <a href="/convert" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Convert</a>
+          <a href="/guides" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Guides</a>
+          <a href="/tool" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">SQL Tool</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="px-4 sm:px-6 py-12 sm:py-16">
+      <div class="max-w-3xl mx-auto">
+        <nav aria-label="Breadcrumb" class="text-xs mono text-text-tertiary mb-4">
+          <a href="/" class="hover:text-text-primary">Home</a>
+          <span class="mx-1.5">/</span>
+          <a href="/guides" class="hover:text-text-primary">Guides</a>
+          <span class="mx-1.5">/</span>
+          <span class="text-text-secondary">{guide.h1}</span>
+        </nav>
+
+        <h1 class="text-3xl sm:text-5xl font-bold tracking-tight leading-[1.1] mb-6">{guide.h1}</h1>
+
+        <div class="space-y-4 text-text-secondary leading-relaxed mb-10">
+          {guide.intro.map((p) => <p>{p}</p>)}
+        </div>
+
+        <div class="space-y-10">
+          {guide.sections.map((s) => (
+            <section>
+              <h2 class="text-xl sm:text-2xl font-bold text-text-primary mb-3">{s.heading}</h2>
+              {s.paragraphs.map((p) => (
+                <p class="text-text-secondary leading-relaxed mb-3">{p}</p>
+              ))}
+            </section>
+          ))}
+        </div>
+
+        {related.length > 0 && (
+          <div class="mt-12 bg-bg-1 border border-border-subtle rounded-xl p-5">
+            <p class="text-[10px] mono uppercase tracking-wider text-text-tertiary mb-3">Try it now</p>
+            <div class="flex flex-wrap gap-2">
+              {related.map((c) => (
+                <a
+                  href={`/convert/${c.slug}`}
+                  class="inline-flex items-center gap-1.5 bg-bg-2 border border-border-subtle rounded-md px-3 py-1.5 text-xs mono text-text-secondary hover:border-accent-brand/50 hover:text-text-primary"
+                >
+                  {c.from} to {c.to}
+                  <Icon name="arrow-right" size={12} className="text-text-tertiary" />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div class="mt-12">
+          <h2 class="text-2xl font-bold text-text-primary mb-6">Questions people ask</h2>
+          <div class="space-y-4">
+            {guide.faqs.map((f) => (
+              <div class="bg-bg-1 border border-border-subtle rounded-lg p-5">
+                <h3 class="font-semibold text-text-primary mb-2">{f.q}</h3>
+                <p class="text-sm text-text-secondary leading-relaxed">{f.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="mt-12">
+          <a href="/guides" class="inline-flex items-center gap-1.5 text-sm text-accent-brand hover:underline">
+            <Icon name="arrow-right" size={14} className="rotate-180" />
+            All guides
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="px-4 sm:px-6 py-10 border-t border-border-subtle">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-start justify-between gap-6 text-sm text-text-tertiary">
+        <span>Built with <span class="text-accent-brand mono">DuckDB-WASM</span> · <span class="text-accent-brand mono">Astro</span></span>
+        <div class="flex flex-col sm:flex-row gap-6">
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] mono uppercase tracking-wider">Converters</span>
+            <a href="/convert/parquet-to-csv" class="text-text-secondary hover:text-text-primary">Parquet to CSV</a>
+            <a href="/convert/csv-to-parquet" class="text-text-secondary hover:text-text-primary">CSV to Parquet</a>
+            <a href="/convert/excel-to-csv" class="text-text-secondary hover:text-text-primary">Excel to CSV</a>
+            <a href="/convert/csv-to-sqlite" class="text-text-secondary hover:text-text-primary">CSV to SQLite</a>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] mono uppercase tracking-wider">Site</span>
+            <a href="/" class="text-text-secondary hover:text-text-primary">Home</a>
+            <a href="/convert" class="text-text-secondary hover:text-text-primary">Convert</a>
+            <a href="/guides" class="text-text-secondary hover:text-text-primary">Guides</a>
+            <a href="/tool" class="text-text-secondary hover:text-text-primary">SQL Tool</a>
+            <a href="/about" class="text-text-secondary hover:text-text-primary">About</a>
+            <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </div>
+</Layout>
