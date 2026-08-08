@@ -19,14 +19,18 @@ function coopCoepPlugin() {
 }
 
 // QueryDrop — fully client-side SQL analytics tool
-// Deployed to Cloudflare Pages (static output)
+// Deployed to Cloudflare Pages (static output).
+// site: = Cloudflare default while no custom domain is owned. When the real
+// domain is bought, change this one value (and the emails in privacy.astro /
+// index.astro) and rebuild. The Cloudflare Pages project MUST be named
+// "querydrop" for this default to match.
 export default defineConfig({
-  site: 'https://querydrop.com',
+  site: 'https://querydrop.pages.dev',
   output: 'static',
   integrations: [
     react(),
     sitemap({
-      filter: (page) => page !== 'https://querydrop.com/tool' && page !== 'https://querydrop.com/tool/',
+      filter: (page) => page !== 'https://querydrop.pages.dev/tool' && page !== 'https://querydrop.pages.dev/tool/',
     }),
   ],
   vite: {
