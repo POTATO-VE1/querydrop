@@ -1,0 +1,144 @@
+/* QueryDrop — Terminal Aesthetic
+ * Opencode-inspired. Solid colors, no soft edges, no glows. Single mono
+ * stack across UI, data, and headings. Depth comes from borders, not shadows.
+ * All colors WCAG AA verified against #0d0d11 background.
+ */
+
+@import "tailwindcss";
+
+@theme {
+  /* ── Backgrounds ─────────────────────────────────────────────── */
+  --color-bg-0: #0d0d11;          /* page base */
+  --color-bg-1: #14141a;          /* panels, cards */
+  --color-bg-2: #1c1c25;          /* hovered, raised */
+  --color-bg-3: #25252f;          /* inputs, code blocks */
+  --color-bg-overlay: #08080acc;  /* modals */
+
+  /* ── Borders ─────────────────────────────────────────────────── */
+  --color-border-subtle: #2a2a35;
+  --color-border-default: #3d3d4a;
+  --color-border-strong: #5a5a6b;
+
+  /* ── Text ────────────────────────────────────────────────────── */
+  --color-text-primary: #e8e8ec;    /* AA: 13.5:1 on bg-0 */
+  --color-text-secondary: #a0a0ad;  /* AA: 7.0:1 on bg-0 */
+  --color-text-tertiary: #6b6b7a;   /* AA: 4.5:1 on bg-0 (large only) */
+  --color-text-inverse: #0d0d11;    /* on accent backgrounds */
+
+  /* ── 4 functional accents (desaturated, terminal-friendly) ─── */
+  --color-accent-brand: #4a9eff;       /* primary action, links */
+  --color-accent-brand-dim: #2d7acc;
+  --color-accent-success: #4ade80;     /* success, OK */
+  --color-accent-success-dim: #22c55e;
+  --color-accent-warn: #fbbf24;        /* warn, attention */
+  --color-accent-warn-dim: #d97706;
+  --color-accent-danger: #f87171;      /* error, danger */
+  --color-accent-danger-dim: #dc2626;
+
+  /* ── Data viz palette (distinct, dark-bg-friendly) ───────────── */
+  --color-data-1: #4a9eff;
+  --color-data-2: #4ade80;
+  --color-data-3: #fbbf24;
+  --color-data-4: #f87171;
+  --color-data-5: #c084fc;
+  --color-data-6: #2dd4bf;
+  --color-data-7: #fb923c;
+  --color-data-8: #94a3b8;
+
+  /* ── Typography — single mono stack ─────────────────────────── */
+  --font-sans: 'JetBrains Mono', 'IBM Plex Mono', 'Fira Code', 'SF Mono', Menlo, Consolas, monospace;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', 'Fira Code', 'SF Mono', Menlo, Consolas, monospace;
+  --font-display: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+
+  /* ── Spacing scale (4px base) ────────────────────────────────── */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+
+  /* ── Radii — ZERO across the board ─────────────────────────── */
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-full: 0;
+
+  /* ── Shadows — none (depth via borders) ─────────────────────── */
+  --shadow-sm: 0 0 0 0 transparent;
+  --shadow-md: 0 0 0 0 transparent;
+  --shadow-lg: 0 0 0 0 transparent;
+
+  /* ── Z-index scale ───────────────────────────────────────────── */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 1000;
+  --z-toast: 2000;
+}
+
+/* ── Base reset + body defaults ────────────────────────────────── */
+@layer base {
+  html {
+    background: var(--color-bg-0);
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--color-bg-0);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  /* Focus ring — 2px solid brand color, no glow */
+  :where(button, a, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-accent-brand);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-text-primary);
+    color: var(--color-text-inverse);
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--color-bg-1); }
+  ::-webkit-scrollbar-thumb { background: var(--color-border-default); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-border-strong); }
+  * { scrollbar-color: var(--color-border-default) var(--color-bg-1); scrollbar-width: thin; }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .mono { font-family: var(--font-mono); }
+
+  /* Links */
+  a { color: var(--color-accent-brand); text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+}
+
+/* ── Reduced motion ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

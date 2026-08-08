@@ -1,0 +1,177 @@
+---
+/**
+ * QueryDrop — /privacy
+ * Privacy policy. QueryDrop has no backend, no analytics, no accounts.
+ * This page is honest about the very small set of network requests the
+ * browser makes (webfont, WASM bundles) and the localStorage keys the
+ * app writes.
+ */
+import Layout from '../layouts/Layout.astro';
+import { Icon } from '../components/ui/Icon';
+
+const localStorageKeys = [
+  { key: 'querydrop:history:v1',           what: 'Last 50 SQL queries you ran (just the text, no results).' },
+  { key: 'querydrop:snippets:v1',          what: 'Named SQL snippets you saved.' },
+  { key: 'querydrop:workspaces:v1',        what: 'Workspace names, file metadata (name + size), and the SQL you wrote — but not the file contents.' },
+  { key: 'querydrop:offline-banner-dismissed', what: 'Timestamp of when you dismissed the offline banner (auto-clears after 1 hour).' },
+];
+
+const networkRequests = [
+  { kind: 'JetBrains Mono webfont (CSS + WOFF2)', from: 'fonts.googleapis.com', when: 'First page load only (cached after).' },
+  { kind: 'DuckDB-WASM bundles',         from: 'querydrop.com',      when: 'First time the tool is opened (cached by the service worker after).' },
+  { kind: 'sql.js WASM (SQLite export)', from: 'querydrop.com',      when: 'Only when you export to SQLite (lazy-loaded, cached after).' },
+  { kind: 'Sample dataset files',        from: 'querydrop.com',      when: 'Only when you load a sample from the library.' },
+];
+---
+
+<Layout
+  title="Privacy — QueryDrop"
+  description="QueryDrop is fully client-side. No backend, no analytics on your data, no accounts, no upload. Your files, queries, and results stay on your device."
+  canonical="/privacy"
+>
+  <div class="min-h-screen">
+    <header class="border-b border-border-subtle bg-bg-0/80 sticky top-0 z-sticky backdrop-saturate-150">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 text-text-primary hover:no-underline">
+          <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="6" fill="#0a0a0f" stroke="#00f0ff" stroke-width="1.5"/>
+            <path d="M8 10h16M8 16h12M8 22h8" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="font-semibold tracking-tight">QueryDrop</span>
+        </a>
+        <a
+          href="/tool"
+          class="inline-flex items-center gap-1.5 bg-accent-brand text-bg-0 px-3 py-1.5 rounded-md font-medium hover:bg-bg-2 hover:no-underline text-sm"
+        >
+          Open tool
+          <Icon name="arrow-right" size={14} />
+        </a>
+      </div>
+    </header>
+
+    <section class="px-4 sm:px-6 py-16 sm:py-20">
+      <div class="max-w-3xl mx-auto">
+        <div class="inline-flex items-center gap-1.5 bg-bg-1 border border-border-subtle rounded-full px-3 py-1 text-xs text-text-secondary mb-6 mono">
+          <Icon name="lock" size={12} className="text-accent-success" />
+          Privacy
+        </div>
+        <h1 class="text-4xl sm:text-5xl font-bold tracking-tight leading-[1.05] mb-6">
+          Privacy by <span class="text-accent-success">architecture.</span>
+        </h1>
+        <p class="text-lg text-text-secondary leading-relaxed mb-4">
+          QueryDrop is a static site. There is no application server, no database, and no analytics pipeline that touches your data. Your files, your queries, and your results <span class="text-text-primary font-medium">never leave your device</span>.
+        </p>
+        <p class="text-text-secondary leading-relaxed">
+          This is not a marketing claim — it is a consequence of how the app is built. Everything runs in your browser, on your computer, in a sandbox the page can't escape.
+        </p>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 py-12 border-t border-border-subtle">
+      <div class="max-w-3xl mx-auto space-y-10">
+        <div>
+          <h2 class="text-xl font-semibold mb-3">What we do not collect</h2>
+          <ul class="space-y-2 text-text-secondary">
+            <li class="flex items-start gap-3"><Icon name="check" size={16} className="text-accent-success mt-0.5 shrink-0" /><span>The files you load — they are read in your browser and never uploaded.</span></li>
+            <li class="flex items-start gap-3"><Icon name="check" size={16} className="text-accent-success mt-0.5 shrink-0" /><span>The SQL you write or the queries you run.</span></li>
+            <li class="flex items-start gap-3"><Icon name="check" size={16} className="text-accent-success mt-0.5 shrink-0" /><span>The result tables — they render on your screen and are not transmitted anywhere.</span></li>
+            <li class="flex items-start gap-3"><Icon name="check" size={16} className="text-accent-success mt-0.5 shrink-0" /><span>Identifiers, IP addresses tied to your queries, or session cookies tied to your work.</span></li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold mb-3">Network requests your browser does make</h2>
+          <p class="text-text-secondary mb-4">Only a small fixed list, all of which are static assets:</p>
+          <div class="bg-bg-1 border border-border-subtle rounded-lg overflow-hidden">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-left text-text-tertiary text-xs uppercase tracking-wider">
+                  <th class="px-4 py-2 font-semibold">Resource</th>
+                  <th class="px-4 py-2 font-semibold">From</th>
+                  <th class="px-4 py-2 font-semibold">When</th>
+                </tr>
+              </thead>
+              <tbody>
+                {networkRequests.map((r) => (
+                  <tr class="border-t border-border-subtle">
+                    <td class="px-4 py-2 mono text-text-primary">{r.kind}</td>
+                    <td class="px-4 py-2 mono text-text-secondary">{r.from}</td>
+                    <td class="px-4 py-2 text-text-secondary">{r.when}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs text-text-tertiary mt-3 mono">
+            After the first visit, the service worker (sw.js) caches these locally so the tool works offline.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold mb-3">What we store in your browser</h2>
+          <p class="text-text-secondary mb-4">QueryDrop uses <code class="text-accent-brand mono">localStorage</code> for a handful of convenience features. Clearing your browser data clears all of these.</p>
+          <div class="bg-bg-1 border border-border-subtle rounded-lg overflow-hidden">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-left text-text-tertiary text-xs uppercase tracking-wider">
+                  <th class="px-4 py-2 font-semibold">Key</th>
+                  <th class="px-4 py-2 font-semibold">Contents</th>
+                </tr>
+              </thead>
+              <tbody>
+                {localStorageKeys.map((r) => (
+                  <tr class="border-t border-border-subtle">
+                    <td class="px-4 py-2 mono text-accent-brand">{r.key}</td>
+                    <td class="px-4 py-2 text-text-secondary">{r.what}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold mb-3">Cookies</h2>
+          <p class="text-text-secondary">None. The site does not set any cookies. The service worker uses Cache Storage, which is separate from cookies and is not transmitted with HTTP requests.</p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold mb-3">Analytics</h2>
+          <p class="text-text-secondary">QueryDrop ships zero analytics by default. An optional "Help improve QueryDrop" toggle in the footer lets you opt in to privacy-friendly page-view analytics via Plausible. No data is sent unless you explicitly enable it. No Google Analytics, no PostHog, no server-side log analyser, no AI telemetry.</p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold mb-3">Third parties</h2>
+          <p class="text-text-secondary mb-3">The only third-party resource the site loads is the <a href="https://fonts.google.com/specimen/JetBrains+Mono" class="text-accent-brand hover:underline" target="_blank" rel="noopener noreferrer">JetBrains Mono</a> webfont, served from <code class="text-accent-brand mono">fonts.googleapis.com</code>. The font request does not include any user data — it is a static CSS + WOFF2 file. You can self-host a font and block that domain without breaking the tool.</p>
+          <p class="text-text-secondary">DuckDB-WASM and the sample datasets are served from <code class="text-accent-brand mono">querydrop.com</code> directly.</p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold mb-3">Open source</h2>
+          <p class="text-text-secondary">QueryDrop is built in the open. The full source is auditable — you can read every line that runs in your browser and confirm the privacy claims above. No compiled secrets, no obfuscated bundles.</p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold mb-3">Contact</h2>
+          <p class="text-text-secondary">If you have a privacy question, find a bug, or want to report something, open an issue on the public repository or email <a href="mailto:privacy@querydrop.com" class="text-accent-brand hover:underline">privacy@querydrop.com</a>.</p>
+        </div>
+
+        <div class="pt-6 border-t border-border-subtle text-xs text-text-tertiary mono">
+          Last updated: June 2026
+        </div>
+      </div>
+    </section>
+
+    <footer class="px-4 sm:px-6 py-10 border-t border-border-subtle">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-text-tertiary">
+        <span>Built with <span class="text-accent-brand mono">DuckDB-WASM</span> · <span class="text-accent-brand mono">Astro</span></span>
+        <div class="flex items-center gap-4">
+          <a href="/" class="text-text-secondary hover:text-text-primary">Home</a>
+          <a href="/tool" class="text-text-secondary hover:text-text-primary">Tool</a>
+          <a href="/convert" class="text-text-secondary hover:text-text-primary">Convert</a>
+          <a href="/pivot" class="text-text-secondary hover:text-text-primary">Pivot</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</Layout>

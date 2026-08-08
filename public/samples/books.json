@@ -1,0 +1,272 @@
+[
+  {
+    "id": 1342,
+    "title": "Pride and Prejudice",
+    "author": "Austen, Jane",
+    "year": 1813,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 50000
+  },
+  {
+    "id": 11,
+    "title": "Alice's Adventures in Wonderland",
+    "author": "Carroll, Lewis",
+    "year": 1865,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 42000
+  },
+  {
+    "id": 84,
+    "title": "Frankenstein",
+    "author": "Shelley, Mary",
+    "year": 1818,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 38000
+  },
+  {
+    "id": 1661,
+    "title": "The Adventures of Sherlock Holmes",
+    "author": "Doyle, Arthur Conan",
+    "year": 1892,
+    "language": "en",
+    "subject": "Mystery",
+    "downloads": 35000
+  },
+  {
+    "id": 2701,
+    "title": "Moby Dick",
+    "author": "Melville, Herman",
+    "year": 1851,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 31000
+  },
+  {
+    "id": 100,
+    "title": "The Complete Works of William Shakespeare",
+    "author": "Shakespeare, William",
+    "year": 1623,
+    "language": "en",
+    "subject": "Drama",
+    "downloads": 28000
+  },
+  {
+    "id": 74,
+    "title": "The Adventures of Tom Sawyer",
+    "author": "Twain, Mark",
+    "year": 1876,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 27000
+  },
+  {
+    "id": 345,
+    "title": "Dracula",
+    "author": "Stoker, Bram",
+    "year": 1897,
+    "language": "en",
+    "subject": "Horror",
+    "downloads": 25000
+  },
+  {
+    "id": 1080,
+    "title": "A Modest Proposal",
+    "author": "Swift, Jonathan",
+    "year": 1729,
+    "language": "en",
+    "subject": "Satire",
+    "downloads": 22000
+  },
+  {
+    "id": 1952,
+    "title": "The Yellow Wallpaper",
+    "author": "Gilman, Charlotte Perkins",
+    "year": 1892,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 18000
+  },
+  {
+    "id": 219,
+    "title": "Heart of Darkness",
+    "author": "Conrad, Joseph",
+    "year": 1899,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 17000
+  },
+  {
+    "id": 5200,
+    "title": "Metamorphosis",
+    "author": "Kafka, Franz",
+    "year": 1915,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 16500
+  },
+  {
+    "id": 174,
+    "title": "The Picture of Dorian Gray",
+    "author": "Wilde, Oscar",
+    "year": 1890,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 16000
+  },
+  {
+    "id": 43,
+    "title": "The Strange Case of Dr. Jekyll and Mr. Hyde",
+    "author": "Stevenson, Robert Louis",
+    "year": 1886,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 15500
+  },
+  {
+    "id": 1260,
+    "title": "Jane Eyre",
+    "author": "Bront\u00eb, Charlotte",
+    "year": 1847,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 14500
+  },
+  {
+    "id": 768,
+    "title": "Wuthering Heights",
+    "author": "Bront\u00eb, Emily",
+    "year": 1847,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 14000
+  },
+  {
+    "id": 1400,
+    "title": "Great Expectations",
+    "author": "Dickens, Charles",
+    "year": 1861,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 13000
+  },
+  {
+    "id": 98,
+    "title": "A Tale of Two Cities",
+    "author": "Dickens, Charles",
+    "year": 1859,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 12500
+  },
+  {
+    "id": 730,
+    "title": "Oliver Twist",
+    "author": "Dickens, Charles",
+    "year": 1838,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 11000
+  },
+  {
+    "id": 158,
+    "title": "Emma",
+    "author": "Austen, Jane",
+    "year": 1815,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 10500
+  },
+  {
+    "id": 161,
+    "title": "Sense and Sensibility",
+    "author": "Austen, Jane",
+    "year": 1811,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 9500
+  },
+  {
+    "id": 105,
+    "title": "Persuasion",
+    "author": "Austen, Jane",
+    "year": 1817,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 8000
+  },
+  {
+    "id": 121,
+    "title": "Northanger Abbey",
+    "author": "Austen, Jane",
+    "year": 1817,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 6500
+  },
+  {
+    "id": 141,
+    "title": "The Scarlet Letter",
+    "author": "Hawthorne, Nathaniel",
+    "year": 1850,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 7000
+  },
+  {
+    "id": 25344,
+    "title": "The Scarlet Pimpernel",
+    "author": "Orczy, Baroness",
+    "year": 1905,
+    "language": "en",
+    "subject": "Adventure",
+    "downloads": 5500
+  },
+  {
+    "id": 209,
+    "title": "The Turn of the Screw",
+    "author": "James, Henry",
+    "year": 1898,
+    "language": "en",
+    "subject": "Horror",
+    "downloads": 5000
+  },
+  {
+    "id": 76,
+    "title": "Adventures of Huckleberry Finn",
+    "author": "Twain, Mark",
+    "year": 1884,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 11500
+  },
+  {
+    "id": 102,
+    "title": "The Souls of Black Folk",
+    "author": "Du Bois, W.E.B.",
+    "year": 1903,
+    "language": "en",
+    "subject": "Essay",
+    "downloads": 4500
+  },
+  {
+    "id": 78,
+    "title": "Treasure Island",
+    "author": "Stevenson, Robert Louis",
+    "year": 1883,
+    "language": "en",
+    "subject": "Adventure",
+    "downloads": 9000
+  },
+  {
+    "id": 394,
+    "title": "Cranford",
+    "author": "Gaskell, Elizabeth",
+    "year": 1853,
+    "language": "en",
+    "subject": "Fiction",
+    "downloads": 3500
+  }
+]

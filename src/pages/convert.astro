@@ -1,0 +1,156 @@
+---
+/**
+ * QueryDrop — /convert
+ * Feature page for the in-browser FormatConverter (Stage 17). Pure Astro,
+ * no JS bundle, hits the existing Layout for meta/OG/canonical.
+ */
+import Layout from '../layouts/Layout.astro';
+import { Icon } from '../components/ui/Icon';
+
+const inputs = ['CSV', 'TSV', 'JSON', 'NDJSON', 'Excel', 'Parquet', 'Feather', 'Arrow', 'GeoJSON'] as const;
+const outputs = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'SQL', 'NDJSON', 'Markdown', 'HTML'] as const;
+
+const steps = [
+  { n: 1, title: 'Drop a file',  body: 'Drag any supported file onto the converter. The browser reads it locally — no upload step.' },
+  { n: 2, title: 'Pick an output', body: 'Choose any of 9 output formats. Each tile shows the format family and a short hint.' },
+  { n: 3, title: 'Download',     body: 'The converted file is built in-memory by DuckDB-WASM and handed straight to your browser\'s download stream.' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'QueryDrop File Converter',
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any',
+  description: 'Free, private file format converter that runs entirely in your browser. 9 input formats, 9 output formats, no upload.',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  featureList: [...new Set([...inputs, ...outputs])].map((f) => `${f} support`),
+};
+---
+
+<Layout
+  title="Convert files in your browser — CSV, JSON, Parquet, Excel | QueryDrop"
+  description="Convert between 9 input formats and 9 output formats (CSV, JSON, Parquet, Excel, SQLite, SQL, NDJSON, Markdown, HTML) in your browser. No upload, no signup. DuckDB-powered, runs offline."
+  canonical="/convert"
+>
+  <div class="min-h-screen">
+    <header class="border-b border-border-subtle bg-bg-0/80 sticky top-0 z-sticky backdrop-saturate-150">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 text-text-primary hover:no-underline">
+          <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="6" fill="#0a0a0f" stroke="#00f0ff" stroke-width="1.5"/>
+            <path d="M8 10h16M8 16h12M8 22h8" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="font-semibold tracking-tight">QueryDrop</span>
+        </a>
+        <a
+          href="/tool"
+          class="inline-flex items-center gap-1.5 bg-accent-brand text-bg-0 px-3 py-1.5 rounded-md font-medium hover:bg-bg-2 hover:no-underline text-sm"
+        >
+          Open tool
+          <Icon name="arrow-right" size={14} />
+        </a>
+      </div>
+    </header>
+
+    <section class="px-4 sm:px-6 py-16 sm:py-24">
+      <div class="max-w-4xl mx-auto text-center">
+        <div class="inline-flex items-center gap-1.5 bg-bg-1 border border-border-subtle rounded-full px-3 py-1 text-xs text-text-secondary mb-6 mono">
+          <Icon name="shuffle" size={12} className="text-accent-brand" />
+          Format converter
+        </div>
+        <h1 class="text-4xl sm:text-6xl font-bold tracking-tight leading-[1.05] mb-6">
+          Convert files.<br />
+          <span class="text-accent-brand">Stay private.</span>
+        </h1>
+        <p class="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
+          Drop a file, pick an output, download. DuckDB-WASM does the work in your browser tab. No upload, no account, no analytics on your data.
+        </p>
+        <a
+          href="/tool"
+          class="inline-flex items-center gap-2 bg-accent-brand text-bg-0 px-6 h-12 rounded-md font-medium text-base hover:bg-bg-2 hover:no-underline"
+        >
+          Open the converter
+          <Icon name="arrow-right" size={18} />
+        </a>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 pb-12 sm:pb-16">
+      <div class="max-w-5xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <div class="text-xs uppercase tracking-widest text-text-tertiary mb-3 mono">Reads (9)</div>
+            <div class="flex flex-wrap gap-2">
+              {inputs.map((f) => (
+                <span class="px-3 py-1.5 bg-bg-1 border border-border-subtle rounded-md text-sm mono text-text-secondary">{f}</span>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div class="text-xs uppercase tracking-widest text-text-tertiary mb-3 mono">Writes (9)</div>
+            <div class="flex flex-wrap gap-2">
+              {outputs.map((f) => (
+                <span class="px-3 py-1.5 bg-bg-1 border border-accent-brand/30 rounded-md text-sm mono text-accent-brand">{f}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 py-12 sm:py-20 border-t border-border-subtle">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-8 text-center">How it works</h2>
+        <ol class="space-y-3">
+          {steps.map((s) => (
+            <li class="bg-bg-1 border border-border-subtle rounded-lg p-5 flex items-start gap-4">
+              <div class="w-9 h-9 rounded-md bg-bg-2 border border-border-subtle flex items-center justify-center text-accent-brand font-bold mono shrink-0">{s.n}</div>
+              <div>
+                <h3 class="font-semibold text-text-primary mb-1">{s.title}</h3>
+                <p class="text-sm text-text-secondary leading-relaxed">{s.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 py-12 sm:py-20 border-t border-border-subtle">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-6">Why QueryDrop converter</h2>
+        <ul class="space-y-3 text-text-secondary">
+          <li class="flex items-start gap-3"><Icon name="check" size={16} className="text-accent-success mt-0.5 shrink-0" /><span><strong class="text-text-primary">No upload</strong> — your file goes from disk to DuckDB-WASM, all in the same browser tab.</span></li>
+          <li class="flex items-start gap-3"><Icon name="check" size={16} className="text-accent-success mt-0.5 shrink-0" /><span><strong class="text-text-primary">Free</strong> — no signup, no quota, no email gate. Use it as much as you want.</span></li>
+          <li class="flex items-start gap-3"><Icon name="check" size={16} className="text-accent-success mt-0.5 shrink-0" /><span><strong class="text-text-primary">Works offline</strong> — install as a PWA and convert files without internet.</span></li>
+          <li class="flex items-start gap-3"><Icon name="check" size={16} className="text-accent-success mt-0.5 shrink-0" /><span><strong class="text-text-primary">Real engine</strong> — DuckDB handles type inference, Parquet stats, and Excel sheets correctly. No regex guesses.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 py-16 sm:py-24 border-t border-border-subtle text-center">
+      <h2 class="text-3xl sm:text-4xl font-bold mb-4">Ready to convert?</h2>
+      <p class="text-text-secondary text-lg mb-8 max-w-xl mx-auto">No signup, no upload, no waiting room.</p>
+      <a
+        href="/tool"
+        class="inline-flex items-center gap-2 bg-accent-brand text-bg-0 px-8 h-12 rounded-md font-medium text-base hover:bg-bg-2 hover:no-underline"
+      >
+        Open the tool
+        <Icon name="arrow-right" size={18} />
+      </a>
+    </section>
+
+    <footer class="px-4 sm:px-6 py-10 border-t border-border-subtle">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-text-tertiary">
+        <span>Built with <span class="text-accent-brand mono">DuckDB-WASM</span> · <span class="text-accent-brand mono">Astro</span></span>
+        <div class="flex items-center gap-4">
+          <a href="/" class="text-text-secondary hover:text-text-primary">Home</a>
+          <a href="/tool" class="text-text-secondary hover:text-text-primary">Tool</a>
+          <a href="/pivot" class="text-text-secondary hover:text-text-primary">Pivot</a>
+          <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+        </div>
+      </div>
+    </footer>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </div>
+</Layout>

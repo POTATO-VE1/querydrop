@@ -1,0 +1,158 @@
+---
+/**
+ * QueryDrop — /pivot
+ * Feature page for the in-browser Pivot Table (Stage 13). Pure Astro,
+ * no JS bundle. Shows the actual DuckDB PIVOT IN-subquery pattern.
+ */
+import Layout from '../layouts/Layout.astro';
+import { Icon } from '../components/ui/Icon';
+
+const steps = [
+  { n: 1, title: 'Load a file',    body: 'Drop a CSV, Parquet, Excel, or JSON onto the tool. The schema is read automatically.' },
+  { n: 2, title: 'Open pivot',     body: 'Click the pivot icon. Pick rows, columns, values, and an aggregation. See the SQL preview live.' },
+  { n: 3, title: 'Read or export', body: 'The pivot table renders in the result panel. Export it as CSV, JSON, Excel, or any of 9 formats.' },
+];
+
+const sampleSql = `PIVOT sales
+ON year IN (
+  SELECT DISTINCT year
+  FROM sales
+  ORDER BY year DESC
+  LIMIT 20
+)
+USING SUM(revenue) AS total_revenue
+GROUP BY region
+ORDER BY region;`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to pivot a table in your browser with QueryDrop',
+  description: 'Create a pivot table from CSV, Parquet, Excel, or JSON using QueryDrop — three steps, fully client-side, free.',
+  totalTime: 'PT1M',
+  tool: [{ '@type': 'HowToTool', name: 'QueryDrop' }],
+  step: steps.map((s) => ({
+    '@type': 'HowToStep',
+    position: s.n,
+    name: s.title,
+    text: s.body,
+  })),
+};
+---
+
+<Layout
+  title="Online Pivot Table — Free, Private, No Excel | QueryDrop"
+  description="Create pivot tables from CSV, Parquet, Excel, or JSON in your browser. Pick rows, columns, values, aggregations. Live SQL preview. 100% client-side, no upload, no signup."
+  canonical="/pivot"
+>
+  <div class="min-h-screen">
+    <header class="border-b border-border-subtle bg-bg-0/80 sticky top-0 z-sticky backdrop-saturate-150">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 text-text-primary hover:no-underline">
+          <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="6" fill="#0a0a0f" stroke="#00f0ff" stroke-width="1.5"/>
+            <path d="M8 10h16M8 16h12M8 22h8" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="font-semibold tracking-tight">QueryDrop</span>
+        </a>
+        <a
+          href="/tool"
+          class="inline-flex items-center gap-1.5 bg-accent-brand text-bg-0 px-3 py-1.5 rounded-md font-medium hover:bg-bg-2 hover:no-underline text-sm"
+        >
+          Open tool
+          <Icon name="arrow-right" size={14} />
+        </a>
+      </div>
+    </header>
+
+    <section class="px-4 sm:px-6 py-16 sm:py-24">
+      <div class="max-w-4xl mx-auto text-center">
+        <div class="inline-flex items-center gap-1.5 bg-bg-1 border border-border-subtle rounded-full px-3 py-1 text-xs text-text-secondary mb-6 mono">
+          <Icon name="pivot" size={12} className="text-accent-brand" />
+          Pivot table
+        </div>
+        <h1 class="text-4xl sm:text-6xl font-bold tracking-tight leading-[1.05] mb-6">
+          Pivot tables,<br />
+          <span class="text-accent-brand">no Excel required.</span>
+        </h1>
+        <p class="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
+          Pick rows, columns, and an aggregation. Watch the SQL build itself. Run it on any file in your browser — no upload, no formula syntax to memorise.
+        </p>
+        <a
+          href="/tool"
+          class="inline-flex items-center gap-2 bg-accent-brand text-bg-0 px-6 h-12 rounded-md font-medium text-base hover:bg-bg-2 hover:no-underline"
+        >
+          Open the tool
+          <Icon name="arrow-right" size={18} />
+        </a>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 py-12 sm:py-20 border-t border-border-subtle">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-8 text-center">How it works</h2>
+        <ol class="space-y-3">
+          {steps.map((s) => (
+            <li class="bg-bg-1 border border-border-subtle rounded-lg p-5 flex items-start gap-4">
+              <div class="w-9 h-9 rounded-md bg-bg-2 border border-border-subtle flex items-center justify-center text-accent-brand font-bold mono shrink-0">{s.n}</div>
+              <div>
+                <h3 class="font-semibold text-text-primary mb-1">{s.title}</h3>
+                <p class="text-sm text-text-secondary leading-relaxed">{s.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 py-12 sm:py-20 border-t border-border-subtle">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-center">Real DuckDB SQL under the hood</h2>
+        <p class="text-text-secondary text-center mb-6">
+          The pivot builder generates a real <code class="text-accent-brand mono">PIVOT</code> statement. You can read, edit, and re-run it from the SQL editor.
+        </p>
+        <pre class="bg-bg-1 border border-border-subtle rounded-lg p-4 overflow-x-auto text-sm mono text-text-primary whitespace-pre"><code>{sampleSql}</code></pre>
+        <p class="text-xs text-text-tertiary mt-3 text-center mono">
+          <code class="text-text-secondary">PIVOT ... IN (subquery)</code> uses the top 20 most-frequent values, so wide pivots stay readable.
+        </p>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 py-12 sm:py-20 border-t border-border-subtle">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-6">Common pivot use cases</h2>
+        <ul class="space-y-3 text-text-secondary">
+          <li class="flex items-start gap-3"><Icon name="check" size={16} className="text-accent-success mt-0.5 shrink-0" /><span><strong class="text-text-primary">Sales by month</strong> — rows = product, columns = month, values = revenue</span></li>
+          <li class="flex items-start gap-3"><Icon name="check" size={16} className="text-accent-success mt-0.5 shrink-0" /><span><strong class="text-text-primary">Survey results</strong> — rows = question, columns = answer, values = count</span></li>
+          <li class="flex items-start gap-3"><Icon name="check" size={16} className="text-accent-success mt-0.5 shrink-0" /><span><strong class="text-text-primary">Server logs</strong> — rows = endpoint, columns = status, values = count</span></li>
+          <li class="flex items-start gap-3"><Icon name="check" size={16} className="text-accent-success mt-0.5 shrink-0" /><span><strong class="text-text-primary">Cohort retention</strong> — rows = signup month, columns = activity month, values = active users</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="px-4 sm:px-6 py-16 sm:py-24 border-t border-border-subtle text-center">
+      <h2 class="text-3xl sm:text-4xl font-bold mb-4">Drop a file. Pivot it. Take it back.</h2>
+      <p class="text-text-secondary text-lg mb-8 max-w-xl mx-auto">No signup, no credit card, no upload. Just your file and your browser.</p>
+      <a
+        href="/tool"
+        class="inline-flex items-center gap-2 bg-accent-brand text-bg-0 px-8 h-12 rounded-md font-medium text-base hover:bg-bg-2 hover:no-underline"
+      >
+        Open the tool
+        <Icon name="arrow-right" size={18} />
+      </a>
+    </section>
+
+    <footer class="px-4 sm:px-6 py-10 border-t border-border-subtle">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-text-tertiary">
+        <span>Built with <span class="text-accent-brand mono">DuckDB-WASM</span> · <span class="text-accent-brand mono">Astro</span></span>
+        <div class="flex items-center gap-4">
+          <a href="/" class="text-text-secondary hover:text-text-primary">Home</a>
+          <a href="/tool" class="text-text-secondary hover:text-text-primary">Tool</a>
+          <a href="/convert" class="text-text-secondary hover:text-text-primary">Convert</a>
+          <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+        </div>
+      </div>
+    </footer>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </div>
+</Layout>

@@ -1,0 +1,223 @@
+---
+/**
+ * QueryDrop — Landing Page
+ * SEO-focused marketing page. No JS bundle, pure Astro output.
+ * Loads in <5KB. Renders 100% on the server (Astro static).
+ */
+import Layout from '../layouts/Layout.astro';
+import { Icon } from '../components/ui/Icon';
+
+// 10 differentiators (from v2 TRD §7) — each maps to a real feature
+const features = [
+  { icon: 'code' as const,           name: 'Visual Query Builder',  desc: 'Drag-and-drop tables, columns, and filters. Get clean SQL.',  tag: 'NEW' },
+  { icon: 'template' as const,       name: '30+ Query Templates',  desc: 'Pre-built queries that match your schema automatically.',     tag: 'NEW' },
+  { icon: 'pivot' as const,          name: 'Pivot Table',          desc: 'Drag rows, columns, values, filters. Live preview.',          tag: 'NEW' },
+  { icon: 'clean' as const,          name: 'Data Cleaning',        desc: '10 actions: trim, dedupe, fill, normalize, rename. Undo.',   tag: 'NEW' },
+  { icon: 'download' as const,       name: '9 Export Formats',     desc: 'CSV, JSON, Parquet, Excel, SQLite, Markdown, HTML, SQL, NDJSON.', tag: 'FREE' },
+  { icon: 'sparkle' as const,        name: 'Format Converter',     desc: 'Convert any of 10 inputs to any of 9 outputs. No upload.',   tag: 'NEW' },
+  { icon: 'bolt' as const,           name: 'Error Pattern DB',     desc: 'Friendly explanations for 50+ common DuckDB errors.',         tag: 'NEW' },
+  { icon: 'database' as const,       name: 'Sample Data Library',  desc: '30+ curated datasets (Iris, NYC Taxi, COVID, FIFA, more).',  tag: 'NEW' },
+  { icon: 'share' as const,          name: 'Shareable Links',      desc: 'Encode query + sample data in URL hash. No server.',         tag: 'NEW' },
+  { icon: 'globe' as const,          name: 'PWA + Offline',        desc: 'Install as app. Works without internet. 100% on your device.', tag: 'NEW' },
+] as const;
+
+const formats = ['CSV', 'TSV', 'JSON', 'NDJSON', 'Excel', 'Parquet', 'Feather', 'Arrow', 'GeoJSON'] as const;
+const exports = ['CSV', 'JSON', 'Parquet', 'Excel', 'SQLite', 'Markdown', 'HTML', 'SQL', 'NDJSON'] as const;
+---
+
+<Layout
+  title="QueryDrop — SQL analytics on your local files. 100% in your browser."
+  description="Free, private SQL analytics on CSV, Parquet, Excel, JSON, and 6 more formats. 9 export formats, Visual Query Builder, Pivot Table, and more. Your files never leave your device."
+>
+  <div class="min-h-screen">
+    <!-- Header -->
+    <header class="border-b border-border-subtle bg-bg-0/80 sticky top-0 z-sticky backdrop-saturate-150">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 text-text-primary hover:no-underline">
+          <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="6" fill="#0a0a0f" stroke="#00f0ff" stroke-width="1.5"/>
+            <path d="M8 10h16M8 16h12M8 22h8" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="font-semibold tracking-tight">QueryDrop</span>
+        </a>
+        <nav class="flex items-center gap-1 sm:gap-2 text-sm" aria-label="Main navigation">
+          <a href="/tool" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Tool</a>
+          <!-- <a href="/guides" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5 hidden sm:inline">Guides</a> -->
+          <!-- <a href="/datasets" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5 hidden sm:inline">Datasets</a> -->
+          <!-- <a href="/pricing" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5 hidden sm:inline">Pricing</a> -->
+          <a
+            href="/tool"
+            class="ml-1 sm:ml-2 inline-flex items-center gap-1.5 bg-accent-brand text-bg-0 px-3 py-1.5 rounded-md font-medium hover:bg-bg-2"
+          >
+            Open tool
+            <Icon name="arrow-right" size={14} />
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="px-4 sm:px-6 py-16 sm:py-24">
+      <div class="max-w-4xl mx-auto text-center">
+        <div class="inline-flex items-center gap-1.5 bg-bg-1 border border-border-subtle rounded-full px-3 py-1 text-xs text-text-secondary mb-6 mono">
+          <span class="w-1.5 h-1.5 rounded-full bg-accent-success"></span>
+          100% client-side. Zero server. Zero signup.
+        </div>
+        <h1 class="text-4xl sm:text-6xl font-bold tracking-tight leading-[1.05] mb-6">
+          SQL analytics on your<br />
+          local files. <span class="text-accent-brand">Private.</span>
+        </h1>
+        <p class="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
+          Drop a CSV, Parquet, Excel, or JSON. Query with SQL, a visual builder, or a template. Export to 9 formats. Your files never leave your device.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            href="/tool"
+            class="inline-flex items-center gap-2 bg-accent-brand text-bg-0 px-6 h-12 rounded-md font-medium text-base hover:bg-bg-2 hover:no-underline"
+          >
+            Open the tool
+            <Icon name="arrow-right" size={18} />
+          </a>
+
+        </div>
+        <p class="text-xs text-text-tertiary mt-6 mono">
+          {formats.length} input formats · {exports.length} export formats · DuckDB-WASM · No telemetry on your data
+        </p>
+      </div>
+    </section>
+
+    <!-- Format strip -->
+    <section class="px-4 sm:px-6 pb-12 sm:pb-16">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center text-xs uppercase tracking-widest text-text-tertiary mb-4 mono">
+          Reads
+        </div>
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+          {formats.map((f) => (
+            <span class="px-3 py-1.5 bg-bg-1 border border-border-subtle rounded-md text-sm mono text-text-secondary">
+              {f}
+            </span>
+          ))}
+        </div>
+        <div class="text-center text-xs uppercase tracking-widest text-text-tertiary mb-4 mono">
+          Writes
+        </div>
+        <div class="flex flex-wrap justify-center gap-2">
+          {exports.map((f) => (
+            <span class="px-3 py-1.5 bg-bg-1 border border-accent-brand/30 rounded-md text-sm mono text-accent-brand">
+              {f}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Features grid -->
+    <section class="px-4 sm:px-6 py-12 sm:py-20 border-t border-border-subtle">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl sm:text-4xl font-bold mb-3">Everything parquetreader has, plus more</h2>
+          <p class="text-text-secondary text-lg max-w-2xl mx-auto">
+            Built on DuckDB. Runs at full speed. Saves nothing. Costs you nothing.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {features.map((f) => (
+            <div class="bg-bg-1 border border-border-subtle rounded-lg p-5 hover:border-accent-brand/50 transition-colors group">
+              <div class="flex items-start justify-between mb-3">
+                <div class="w-9 h-9 rounded-md bg-bg-2 border border-border-subtle flex items-center justify-center text-accent-brand group-hover:bg-bg-2 transition-shadow">
+                  <Icon name={f.icon} size={18} />
+                </div>
+                <span class="text-[10px] uppercase tracking-widest font-semibold text-accent-success mono">
+                  {f.tag}
+                </span>
+              </div>
+              <h3 class="font-semibold text-text-primary mb-1.5">{f.name}</h3>
+              <p class="text-sm text-text-secondary leading-relaxed">{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy callout -->
+    <section class="px-4 sm:px-6 py-12 sm:py-20 border-t border-border-subtle">
+      <div class="max-w-3xl mx-auto">
+        <div class="bg-bg-1 border border-accent-success/30 rounded-xl p-6 sm:p-10">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-md bg-accent-success/10 border border-accent-success/40 flex items-center justify-center text-accent-success flex-shrink-0">
+              <Icon name="lock" size={20} />
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold mb-3">Your data, your device. Period.</h2>
+              <p class="text-text-secondary leading-relaxed mb-4">
+                Your files, your queries, your results, and your data <span class="text-text-primary font-medium">never leave your device</span>. Not to a server. Not to an AI. Not to an analytics service.
+              </p>
+              <p class="text-text-secondary leading-relaxed">
+                This is not a marketing claim — it's architecture. QueryDrop is a static site. There is no backend. The browser refuses all third-party network calls.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="px-4 sm:px-6 py-16 sm:py-24 border-t border-border-subtle text-center">
+      <h2 class="text-3xl sm:text-4xl font-bold mb-4">Drop a file. Query it. Take it back.</h2>
+      <p class="text-text-secondary text-lg mb-8 max-w-xl mx-auto">
+        No signup. No credit card. No upload. Just your file and your browser.
+      </p>
+      <a
+        href="/tool"
+        class="inline-flex items-center gap-2 bg-accent-brand text-bg-0 px-8 h-12 rounded-md font-medium text-base hover:bg-bg-2 hover:no-underline"
+      >
+        Open the tool
+        <Icon name="arrow-right" size={18} />
+      </a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="px-4 sm:px-6 py-10 border-t border-border-subtle">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-text-tertiary">
+        <div class="flex items-center gap-2">
+          <span>Built with</span>
+          <span class="text-accent-brand mono">DuckDB-WASM</span>
+          <span>·</span>
+          <span class="text-accent-brand mono">Astro</span>
+          <span>·</span>
+          <span class="text-accent-brand mono">React 19</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <!-- <a href="/guides" class="text-text-secondary hover:text-text-primary">Guides</a> -->
+          <!-- <a href="/datasets" class="text-text-secondary hover:text-text-primary">Datasets</a> -->
+          <!-- <a href="/pricing" class="text-text-secondary hover:text-text-primary">Pricing</a> -->
+          <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+          <a
+            href="mailto:hello@querydrop.com"
+            class="text-text-secondary hover:text-text-primary inline-flex items-center gap-1.5"
+          >
+            <Icon name="mail" size={14} />
+            <span>Contact</span>
+          </a>
+          <span id="analytics-toggle-mount"></span>
+        </div>
+      </div>
+    </footer>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'QueryDrop',
+    url: 'https://querydrop.com',
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'Any',
+    description: 'Free, private SQL analytics on CSV, Parquet, Excel, JSON and more. 100% in your browser.',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  })} />
+  </div>
+</Layout>
+
+<script>
+  import { AnalyticsToggle } from '../scripts/analytics';
+  AnalyticsToggle();
+</script>

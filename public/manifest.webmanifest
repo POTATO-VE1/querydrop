@@ -1,0 +1,20 @@
+{
+  "name": "QueryDrop — SQL analytics on your local files",
+  "short_name": "QueryDrop",
+  "description": "Private, free, no signup. 10 file formats, Visual Query Builder, Pivot Table, export to 9 formats. 100% in your browser.",
+  "start_url": "/tool",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d0d11",
+  "theme_color": "#0d0d11",
+  "categories": ["developer", "productivity", "utilities", "data"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

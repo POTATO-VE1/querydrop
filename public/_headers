@@ -1,0 +1,27 @@
+# Cloudflare Pages headers for QueryDrop.
+# Cross-Origin Isolation required for DuckDB-WASM high-perf mode
+# (SharedArrayBuffer + pthreads).
+# https://web.dev/articles/coop-coep
+
+# Cross-Origin Isolation for the entire app
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://plausible.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' blob:; worker-src 'self' blob:; frame-ancestors 'none'
+
+# DuckDB WASM bundles must be served with proper CORS so SharedArrayBuffer works
+/duckdb/*
+  Cross-Origin-Resource-Policy: same-origin
+  Cache-Control: public, max-age=31536000, immutable
+
+# Long-cache hashed assets (Astro auto-names these with content hashes)
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Security headers (applies to all routes)
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
