@@ -1,0 +1,108 @@
+---
+/**
+ * QueryDrop — /terms
+ * Terms of use. Short, human, honest: local processing, no warranty,
+ * acceptable use, ads disclosure, liability limits.
+ */
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Terms of Use — QueryDrop"
+  description="The terms for using QueryDrop: free local processing, no warranty, acceptable use, and liability limits."
+  canonical="/terms"
+>
+  <div class="min-h-screen">
+    <header class="border-b border-border-subtle bg-bg-0/80 sticky top-0 z-sticky backdrop-saturate-150">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 text-text-primary hover:no-underline">
+          <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="6" fill="#0a0a0f" stroke="#00f0ff" stroke-width="1.5"/>
+            <path d="M8 10h16M8 16h12M8 22h8" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span class="font-semibold tracking-tight">QueryDrop</span>
+        </a>
+        <nav class="flex items-center gap-1 sm:gap-2 text-sm" aria-label="Main navigation">
+          <a href="/convert" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Convert</a>
+          <a href="/guides" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">Guides</a>
+          <a href="/tool" class="text-text-secondary hover:text-text-primary px-2 sm:px-3 py-1.5">SQL Tool</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="px-4 sm:px-6 py-14 sm:py-20">
+      <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl sm:text-5xl font-bold tracking-tight leading-[1.1] mb-8">Terms of Use</h1>
+
+        <div class="space-y-8 text-text-secondary leading-relaxed">
+          <div>
+            <h2 class="text-xl font-bold text-text-primary mb-2">1. What QueryDrop is</h2>
+            <p>QueryDrop is a free, browser-based set of tools for converting and querying data files. All processing happens locally in your browser; no file contents are uploaded to any server. By using the site you agree to these terms.</p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-bold text-text-primary mb-2">2. No warranty</h2>
+            <p>The tools are provided "as is", without warranty of any kind. Conversions and queries are executed by software (DuckDB compiled to WebAssembly) that can fail on unusual files, malformed data, or browser limits. You are responsible for verifying that converted or exported files are correct before relying on them.</p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-bold text-text-primary mb-2">3. Acceptable use</h2>
+            <p>Do not use QueryDrop to process or distribute illegal content, or to infringe anyone's rights. The service is free and unlimited in normal use; automated abuse (scripted bulk processing designed to disrupt the service) is not allowed.</p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-bold text-text-primary mb-2">4. Your data stays yours</h2>
+            <p>Your files, queries, and results never leave your device. The site stores only what you explicitly save in your browser's local storage (query history, snippets, workspace metadata), which you can delete at any time by clearing site data.</p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-bold text-text-primary mb-2">5. Advertising</h2>
+            <p>Content pages display ads served by Google AdSense. Ad requests are made by your browser and contain no data from your files. See the privacy policy for details and opt-out options.</p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-bold text-text-primary mb-2">6. Limitation of liability</h2>
+            <p>To the maximum extent permitted by law, QueryDrop and its contributors are not liable for any damages arising from use of the site, including data loss, incorrect conversions, or business interruption. If you process data you cannot afford to lose, keep backups.</p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-bold text-text-primary mb-2">7. Changes to these terms</h2>
+            <p>These terms may be updated as the service evolves. Material changes will be reflected on this page; continued use of the site constitutes acceptance.</p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-bold text-text-primary mb-2">8. Contact</h2>
+            <p>Questions about these terms: <a href="mailto:hello@querydrop.com" class="text-accent-brand hover:underline">hello@querydrop.com</a>.</p>
+          </div>
+
+          <p class="text-xs mono text-text-tertiary pt-4 border-t border-border-subtle">Last updated: August 2026</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="px-4 sm:px-6 py-10 border-t border-border-subtle">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-start justify-between gap-6 text-sm text-text-tertiary">
+        <span>Built with <span class="text-accent-brand mono">DuckDB-WASM</span> · <span class="text-accent-brand mono">Astro</span></span>
+        <div class="flex flex-col sm:flex-row gap-6">
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] mono uppercase tracking-wider">Converters</span>
+            <a href="/convert/parquet-to-csv" class="text-text-secondary hover:text-text-primary">Parquet to CSV</a>
+            <a href="/convert/csv-to-parquet" class="text-text-secondary hover:text-text-primary">CSV to Parquet</a>
+            <a href="/convert/excel-to-csv" class="text-text-secondary hover:text-text-primary">Excel to CSV</a>
+            <a href="/convert/csv-to-sqlite" class="text-text-secondary hover:text-text-primary">CSV to SQLite</a>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[10px] mono uppercase tracking-wider">Site</span>
+            <a href="/" class="text-text-secondary hover:text-text-primary">Home</a>
+            <a href="/convert" class="text-text-secondary hover:text-text-primary">Convert</a>
+            <a href="/guides" class="text-text-secondary hover:text-text-primary">Guides</a>
+            <a href="/tool" class="text-text-secondary hover:text-text-primary">SQL Tool</a>
+            <a href="/about" class="text-text-secondary hover:text-text-primary">About</a>
+            <a href="/privacy" class="text-text-secondary hover:text-text-primary">Privacy</a>
+            <a href="/terms" class="text-text-secondary hover:text-text-primary">Terms</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</Layout>

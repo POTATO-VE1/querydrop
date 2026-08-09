@@ -18,7 +18,7 @@ const localStorageKeys = [
 
 const networkRequests = [
   { kind: 'JetBrains Mono webfont (CSS + WOFF2)', from: 'fonts.googleapis.com', when: 'First page load only (cached after).' },
-  { kind: 'DuckDB-WASM bundles',         from: 'querydrop.com',      when: 'First time the tool is opened (cached by the service worker after).' },
+  { kind: 'DuckDB-WASM bundles',         from: 'cdn.jsdelivr.net', when: 'First time the tool is opened (cached by the service worker after).' },
   { kind: 'sql.js WASM (SQLite export)', from: 'querydrop.com',      when: 'Only when you export to SQLite (lazy-loaded, cached after).' },
   { kind: 'Sample dataset files',        from: 'querydrop.com',      when: 'Only when you load a sample from the library.' },
 ];
@@ -179,6 +179,7 @@ const networkRequests = [
           <a href="/guides" class="text-text-secondary hover:text-text-primary">Guides</a>
           <a href="/about" class="text-text-secondary hover:text-text-primary">About</a>
           <a href="/pivot" class="text-text-secondary hover:text-text-primary">Pivot</a>
+          <a href="/terms" class="text-text-secondary hover:text-text-primary">Terms</a>
         </div>
       </div>
     </footer>
