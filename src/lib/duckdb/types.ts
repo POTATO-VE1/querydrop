@@ -29,6 +29,9 @@ export interface QueryResult<TRow = Record<string, unknown>> {
 export interface QueryOptions {
   /** Hard timeout in ms. Query is cancelled after this. Default 30_000. */
   timeoutMs?: number;
+  /** Max rows to materialize into JS. Default MAX_RESULT_ROWS. Pass
+   *  Infinity for paths that must serialize the full result (converter). */
+  maxRows?: number;
 }
 
 /** A registered file (handle) inside DuckDB. */

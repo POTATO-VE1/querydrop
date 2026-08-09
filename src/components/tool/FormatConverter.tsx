@@ -514,7 +514,9 @@ export async function convertSourceToBlob(
   const conn = await db.connect();
   const safeName = '"' + source.virtualName.replace(/"/g, '""') + '"';
   try {
-    const result = await runQuery(conn, `SELECT * FROM ${safeName}`);
+    // maxRows: Infinity — the converter must serialize the FULL file, not the
+    // UI's 50k preview cap (which would silently truncate the download).
+    const result = await runQuery(conn, `SELECT * FROM ${safeName}`, { maxRows: Infinity });
     return await serializeToBlobFromResult(result, output);
   } finally {
     try {

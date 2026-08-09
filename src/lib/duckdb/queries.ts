@@ -68,7 +68,7 @@ export async function runQuery(
 
     try {
       const arrowTable = await Promise.race([conn.query(stmt), timeoutPromise]);
-      const result = arrowToResult(arrowTable as unknown as arrow.Table, startedAt);
+      const result = arrowToResult(arrowTable as unknown as arrow.Table, startedAt, options.maxRows);
       // DDL/DML returns a 1x1 "Count" row; prefer a later SELECT's data.
       if (result.columns.length > 0) {
         lastResult = result;
@@ -138,20 +138,24 @@ function assertSafeIdent(name: string, ctx: string): void {
   }
 }
 
-/** Convert an Arrow table to our domain QueryResult, capped at
- *  MAX_RESULT_ROWS rows (rowCount still reports the true total). */
-function arrowToResult(table: arrow.Table, startedAt: number): QueryResult {
+/** Convert an Arrow table to our domain QueryResult, capped at maxRows
+ *  (default MAX_RESULT_ROWS; rowCount still reports the true total).
+ *  Temporal columns become ISO strings — duckdb-wasm hands them back as
+ *  raw epoch numbers, which would serialize as garbage in CSV/JSON. */
+function arrowToResult(table: arrow.Table, startedAt: number, maxRows?: number): QueryResult {
   const columns = table.schema.fields.map((f) => f.name);
   const columnTypes = table.schema.fields.map((f) => f.type.toString());
   const total = table.numRows;
+  const cap = maxRows === undefined ? MAX_RESULT_ROWS : maxRows;
+  const temporal = table.schema.fields.map((f) => temporalKind(f.type));
   const rows: Record<string, unknown>[] = [];
 
   let i = 0;
   for (const row of table) {
-    if (i >= MAX_RESULT_ROWS) break;
+    if (i >= cap) break;
     const obj: Record<string, unknown> = {};
     columns.forEach((col, j) => {
-      obj[col] = serializeArrowValue(row[col]);
+      obj[col] = serializeArrowValue(row[col], temporal[j]);
     });
     rows.push(obj);
     i++;
@@ -162,17 +166,36 @@ function arrowToResult(table: arrow.Table, startedAt: number): QueryResult {
     columnTypes,
     rows,
     rowCount: total,
-    truncated: total > rows.length,
+    truncated: Number.isFinite(cap) && total > rows.length,
     durationMs: Math.round(performance.now() - startedAt),
     bytesScanned: null,
   };
 }
 
+/** Arrow date/timestamp types → conversion kind. Matches on the type STRING
+ *  (e.g. "date32[day]", "timestamp[ms]") because duckdb-wasm ships its own
+ *  apache-arrow copy whose numeric Type enum ids differ from the project's —
+ *  matching numbers across versions is a silent bug. DateDay values are days
+ *  since epoch; everything else duckdb-wasm returns as epoch milliseconds. */
+function temporalKind(type: { toString(): string }): 'date' | 'ts' | null {
+  const t = type.toString();
+  // arrow toString() yields e.g. "Date32<DAY>", "Date64<MILLISECOND>",
+  // "Timestamp<MILLISECOND>" — capital-first, so match case-insensitively.
+  if (/^date/i.test(t)) return 'date';
+  if (/^timestamp/i.test(t)) return 'ts';
+  return null;
+}
+
 /** Arrow values can be BigInts, TypedArrays, Date objects, etc. → JSON-safe. */
-function serializeArrowValue(value: unknown): unknown {
+function serializeArrowValue(value: unknown, temporal: 'date' | 'ts' | null = null): unknown {
   if (value === null || value === undefined) return value;
   if (typeof value === 'bigint') return value.toString();
   if (value instanceof Date) return value.toISOString();
+  if (temporal && typeof value === 'number') {
+    const ms = temporal === 'date' && value < 1e10 ? value * 86_400_000 : value;
+    const iso = new Date(ms).toISOString();
+    return temporal === 'date' ? iso.slice(0, 10) : iso;
+  }
   if (value instanceof Uint8Array) {
     // Truncate to avoid huge base64 in the UI; show first 64 bytes
     const hex = Array.from(value.slice(0, 64))
