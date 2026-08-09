@@ -1,0 +1,4 @@
+# Security contact for querydrop.pages.dev
+Contact: https://github.com/POTATO-VE1/querydrop/issues
+Preferred-Languages: en
+Expires: 2027-08-08T00:00:00.000Z

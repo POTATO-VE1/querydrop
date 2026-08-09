@@ -1,0 +1,36 @@
+# QueryDrop
+
+> Free, private, browser-based tools for converting and querying data files (CSV, Parquet, Excel, JSON, GeoJSON, and more). All processing happens locally on the user's device — files are never uploaded. No accounts, no signup, no cost.
+
+## Converters
+
+- [Parquet to CSV](https://querydrop.pages.dev/convert/parquet-to-csv/): Convert .parquet files to .csv in the browser, no upload.
+- [CSV to Parquet](https://querydrop.pages.dev/convert/csv-to-parquet/): Convert .csv files to compressed, columnar .parquet.
+- [Excel to CSV](https://querydrop.pages.dev/convert/excel-to-csv/): Convert .xlsx/.xls workbooks to .csv (first sheet).
+- [CSV to JSON](https://querydrop.pages.dev/convert/csv-to-json/): Convert .csv rows to a JSON array of objects.
+- [JSON to CSV](https://querydrop.pages.dev/convert/json-to-csv/): Convert JSON / NDJSON to .csv.
+- [CSV to SQLite](https://querydrop.pages.dev/convert/csv-to-sqlite/): Build a queryable .sqlite3 database from a .csv.
+- [Parquet to Excel](https://querydrop.pages.dev/convert/parquet-to-excel/): Convert .parquet to an .xlsx workbook.
+- [Parquet to JSON](https://querydrop.pages.dev/convert/parquet-to-json/): Convert .parquet to a JSON array of objects.
+- [Excel to Parquet](https://querydrop.pages.dev/convert/excel-to-parquet/): Convert .xlsx to columnar .parquet.
+- [GeoJSON to CSV](https://querydrop.pages.dev/convert/geojson-to-csv/): Convert GeoJSON features to .csv rows.
+- [All conversions](https://querydrop.pages.dev/convert/): The full converter hub (9 input formats × 9 output formats).
+
+## Tools
+
+- [SQL Query Pad](https://querydrop.pages.dev/tool/): Run real DuckDB SQL on local files — joins, aggregations, window functions, pivots. No upload, results exportable to 9 formats.
+- [Online Pivot Table](https://querydrop.pages.dev/pivot/): Build pivot tables from local files in the browser.
+
+## Guides
+
+- [How to open a Parquet file (7 ways, no install)](https://querydrop.pages.dev/guides/how-to-open-parquet-files/)
+- [Parquet vs CSV: which format should you use?](https://querydrop.pages.dev/guides/parquet-vs-csv/)
+- [How to query a CSV file with SQL (without uploading it)](https://querydrop.pages.dev/guides/query-csv-with-sql-online/)
+- [Excel to CSV: what carries over and what doesn't](https://querydrop.pages.dev/guides/excel-to-csv-what-carries-over/)
+- [SQLite vs DuckDB: which is right for your data?](https://querydrop.pages.dev/guides/sqlite-vs-duckdb/)
+
+## About
+
+- [About QueryDrop](https://querydrop.pages.dev/about/): what the site is, who built it, and why it exists.
+- [Privacy policy](https://querydrop.pages.dev/privacy/): no backend, no upload, no tracking by default; ads disclosure.
+- [Terms of use](https://querydrop.pages.dev/terms/): free use, no warranty, liability limits.
